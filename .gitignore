@@ -3,3 +3,10 @@
 out/
 www/
 posts/
+misc/
+lib64/
+lib/
+include/
+bin/
+
+pyvenv.cfg
