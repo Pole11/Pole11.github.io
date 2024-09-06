@@ -1,12 +1,9 @@
-#ifndef _LIB_H_
-#define _LIB_H_
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "lib.h"
-#include "config.h"
+#include "parse.h"
+#include "../config.h"
 
 // Helper function to replace a substring
 char* replace(const char* str, const char* old, const char* new) {
@@ -219,7 +216,7 @@ void processAudio(char* line, char* html) {
 }
 
 // Main function to parse markdown and convert to HTML
-void markdownToHTML(FILE* inputFile, FILE* outputFile) {
+void md2html_f2f(FILE* inputFile, FILE* outputFile) {
     char line[MAX_LINE_LENGTH];
     char html[MAX_HTML_LENGTH] = "";
 
@@ -282,5 +279,3 @@ void markdownToHTML(FILE* inputFile, FILE* outputFile) {
     // Output final HTML
     fputs(html, outputFile);
 }
-
-#endif

@@ -1,6 +1,8 @@
 # FIND A NAME
 
-## Features implemented:
+## Markdown to HTML
+
+### Features implemented:
 
 - Headers (`#`): Supports `#` to `######` for `<h1>` to `<h6>`.
 - Lists (`-` or `*`): Supports unordered lists using `-` or `*`.
@@ -12,7 +14,7 @@
 - Links `([text](url))`: Converts to `<a href="url">text</a>`.
 - Closing Lists: Ensures that HTML lists are closed properly when switching contexts.
 
-## Features to implement
+### Features to implement
 
 - New line on double new line
 - Quotes
@@ -27,10 +29,12 @@ Yeah, there is still a lot to do and fix.
 
 ## Improvements
 
-Use a different method to converto to markdown: the "syntactical approach" is not very effective for complex tasks. Try using a better data structure like a tree.
+- Use a different method to converto to markdown: the "syntactical approach" is not very effective for complex tasks. Try using a better data structure like a tree.
 
-Improve the recognition of links that somehow need to be a completely different line.
+- Improve the recognition of links that somehow need to be a completely different line.
 
-Find bugs and implement a verificator for them.
+- Find bugs and implement a verificator for them.
 
-Subdivide the lib in multiple lib files.
+- Subdivide the lib in multiple lib files.
+
+- Add the ability to add js and css files to a page.

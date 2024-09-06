@@ -1,5 +1,5 @@
-./.vscode/
+.vscode/
 
-./out/
-./www/
-./posts/
+out/
+www/
+posts/
