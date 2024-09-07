@@ -15,7 +15,8 @@ DOCTYPE_START = """<!DOCTYPE html>
     <link rel="stylesheet" href="/www/style/style.css">
 </head>
 <body>"""
-DOCTYPE_END = """</body>
+DOCTYPE_END = """<script src="/www/scripts/microlight.js"></script>
+</body>
 </html>"""
 
 # INDEX 
@@ -24,14 +25,14 @@ index_content = DOCTYPE_START.format("Pole :)")
 # header
 
 # topbar
-with open(MISC_DIR + "topbar.md", "r") as f:
+with open(MISC_DIR + "topbar.html", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
-    index_content += html
+    #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
+    index_content += content
 
 with open(MISC_DIR + "home.md", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
+    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
     index_content += html
 
 # posts list
@@ -51,7 +52,7 @@ index_content += "</ul>"
 # footer
 with open(MISC_DIR + "footer.md", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
+    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
     index_content += html
 
 index_content += DOCTYPE_END
@@ -63,10 +64,10 @@ with open(WWW_DIR + "index.html", "w") as f:
 post_index_content = DOCTYPE_START.format("Posts")
 
 # topbar
-with open(MISC_DIR + "topbar.md", "r") as f:
+with open(MISC_DIR + "topbar.html", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
-    post_index_content += html
+    #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
+    post_index_content += content
 
 # posts list
 posts = os.listdir(POSTS_DIR)
@@ -82,7 +83,7 @@ post_index_content += "</ul>"
 # footer
 with open(MISC_DIR + "footer.md", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
+    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
     post_index_content += html
 
 post_index_content += DOCTYPE_END
@@ -97,21 +98,21 @@ for post in posts:
     post_content = DOCTYPE_START.format(post.replace("-", " ").replace(".md", ""))
 
     # topbar
-    with open(MISC_DIR + "topbar.md", "r") as f:
+    with open(MISC_DIR + "topbar.html", "r") as f:
         content = f.read()
-        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
-        post_content += html
+        #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
+        post_content += content
     
     # content
     with open(POSTS_DIR + post, "r") as f:
         content = f.read()
-        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
+        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
         post_content += html
 
     # footer
     with open(MISC_DIR + "footer.md", "r") as f:
         content = f.read()
-        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
+        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
         post_content += html
 
     post_content += DOCTYPE_END
@@ -123,21 +124,21 @@ for post in posts:
 contact_content = DOCTYPE_START.format("Contact")
 
 # topbar
-with open(MISC_DIR + "topbar.md", "r") as f:
+with open(MISC_DIR + "topbar.html", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
-    contact_content += html
+    #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
+    contact_content += content
 
 # content
 with open(MISC_DIR + "contact.md", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
+    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
     contact_content += html
 
 # footer
 with open(MISC_DIR + "footer.md", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
+    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
     contact_content += html
 
 contact_content += DOCTYPE_END
@@ -149,21 +150,21 @@ with open(WWW_DIR + "contact.html", "w") as f:
 about_content = DOCTYPE_START.format("About me")
 
 # topbar
-with open(MISC_DIR + "topbar.md", "r") as f:
+with open(MISC_DIR + "topbar.html", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
-    about_content += html
+    #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
+    about_content += content
 
 # content
 with open(MISC_DIR + "about.md", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
+    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
     about_content += html
 
 # footer
 with open(MISC_DIR + "footer.md", "r") as f:
     content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
+    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
     about_content += html
 
 about_content += DOCTYPE_END
@@ -187,7 +188,7 @@ for post in posts:
     # content
     with open(POSTS_DIR + post, "r") as f:
         content = f.read()
-        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables"])
+        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
         post_content += html
 
     with open(WWW_SCRIPTS_DIR + "shell.js", "a") as f:
