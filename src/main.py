@@ -3,8 +3,10 @@ import os
 
 MISC_DIR = "misc/"
 POSTS_DIR = "posts/"
+GAMES_DIR = "games/"
 WWW_DIR = "www/"
 WWW_POSTS_DIR = "www/posts/"
+WWW_GAMES_DIR = "www/games/"
 WWW_SCRIPTS_DIR = "www/scripts/"
 DOCTYPE_START = """<!DOCTYPE html>
 <html lang="en">
@@ -15,14 +17,22 @@ DOCTYPE_START = """<!DOCTYPE html>
     <link rel="stylesheet" href="/www/style/style.css">
 </head>
 <body>"""
+DOCTYPE_GAMES_START = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{}</title>
+    <script src="/www/scripts/littlejs.min.js"></script>
+    <link rel="stylesheet" href="/www/style/style.css">
+</head>
+<body>"""
 DOCTYPE_END = """<script src="/www/scripts/microlight.js"></script>
 </body>
 </html>"""
 
 # INDEX 
 index_content = DOCTYPE_START.format("Pole :)")
-
-# header
 
 # topbar
 with open(MISC_DIR + "topbar.html", "r") as f:
@@ -37,6 +47,7 @@ with open(MISC_DIR + "home.md", "r") as f:
 
 # posts list
 posts = os.listdir(POSTS_DIR)
+posts = filter(lambda p: p[0] != '.', posts)
 posts = sorted(posts)
 posts = reversed(posts)
 posts = list(posts)
@@ -71,6 +82,7 @@ with open(MISC_DIR + "topbar.html", "r") as f:
 
 # posts list
 posts = os.listdir(POSTS_DIR)
+posts = filter(lambda p: p[0] != '.', posts)
 posts = sorted(posts)
 
 post_index_content += "<ul>"
@@ -93,6 +105,7 @@ with open(WWW_POSTS_DIR + "index.html", "w") as f:
 
 # POST
 posts = os.listdir(POSTS_DIR)
+posts = filter(lambda p: p[0] != '.', posts)
 
 for post in posts:
     post_content = DOCTYPE_START.format(post.replace("-", " ").replace(".md", ""))
@@ -197,4 +210,67 @@ for post in posts:
             f.write(",\n")
         else:
             f.write(" }")
+
+# GAMES INDEX
+game_index_content = DOCTYPE_START.format("Games")
+
+# topbar
+with open(MISC_DIR + "topbar.html", "r") as f:
+    content = f.read()
+    #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
+    game_index_content += content
+
+# games list
+games = os.listdir(GAMES_DIR)
+games = sorted(games)
+
+game_index_content += "WIP<ul>"
+
+for game in games:
+    game_index_content += "<li><a href=\"/www/games/" + game.replace(".js", ".html") + "\">" + game.replace(".js", "") + "</a></li>"
+
+game_index_content += "</ul>"
+
+# footer
+with open(MISC_DIR + "footer.md", "r") as f:
+    content = f.read()
+    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
+    game_index_content += html
+
+game_index_content += DOCTYPE_END
+
+with open(WWW_GAMES_DIR + "index.html", "w") as f:
+    f.write(game_index_content)
+
+
+# GAMES
+games = os.listdir(GAMES_DIR)
+
+for game in games:
+    game_content = DOCTYPE_GAMES_START.format(game.replace("-", " ").replace(".js", ""))
+
+    # topbar
+    with open(MISC_DIR + "topbar.html", "r") as f:
+        content = f.read()
+        #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
+        game_content += content
+    
+    game_content += "" # here put the canvas
+
+    # footer
+    with open(MISC_DIR + "footer.md", "r") as f:
+        content = f.read()
+        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
+        game_content += html
+
+    # content
+    game_content += "<script>"
+    with open(GAMES_DIR + game, "r") as f:
+        content = f.read()
+        game_content += content
+    game_content += "</script>"
+    game_content += DOCTYPE_END
+
+    with open(WWW_GAMES_DIR + game.replace(".js", ".html"), "w") as f:
+        f.write(game_content)
 
