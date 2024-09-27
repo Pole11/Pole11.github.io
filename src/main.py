@@ -227,7 +227,7 @@ games = sorted(games)
 game_index_content += "WIP<ul>"
 
 for game in games:
-    game_index_content += "<li><a href=\"/www/games/" + game.replace(".js", ".html") + "\">" + game.replace(".js", "") + "</a></li>"
+    game_index_content += "<li><a href=\"/games/" + game.replace(".js", ".html") + "\">" + game.replace(".js", "") + "</a></li>"
 
 game_index_content += "</ul>"
 
