@@ -4,10 +4,10 @@ import os
 MISC_DIR = "misc/"
 POSTS_DIR = "posts/"
 GAMES_DIR = "games/"
-WWW_DIR = "/"
-WWW_POSTS_DIR = "/posts/"
-WWW_GAMES_DIR = "/games/"
-WWW_SCRIPTS_DIR = "/scripts/"
+WWW_DIR = "www/"
+WWW_POSTS_DIR = "www/posts/"
+WWW_GAMES_DIR = "www/games/"
+WWW_SCRIPTS_DIR = "www/scripts/"
 DOCTYPE_START = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,7 +56,7 @@ index_content += "<ul>"
 
 for i in range(0,5):
     post = posts[i]
-    index_content += "<li><a href=\"/" + WWW_POSTS_DIR + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
+    index_content += "<li><a href=\"/posts/" + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
 
 index_content += "</ul>"
 
@@ -88,7 +88,7 @@ posts = sorted(posts)
 post_index_content += "<ul>"
 
 for post in posts:
-    post_index_content += "<li><a href=\"/" + WWW_POSTS_DIR + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
+    post_index_content += "<li><a href=\"/posts/" + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
 
 post_index_content += "</ul>"
 
