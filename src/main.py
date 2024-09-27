@@ -4,17 +4,17 @@ import os
 MISC_DIR = "misc/"
 POSTS_DIR = "posts/"
 GAMES_DIR = "games/"
-WWW_DIR = "www/"
-WWW_POSTS_DIR = "www/posts/"
-WWW_GAMES_DIR = "www/games/"
-WWW_SCRIPTS_DIR = "www/scripts/"
+WWW_DIR = "/"
+WWW_POSTS_DIR = "/posts/"
+WWW_GAMES_DIR = "/games/"
+WWW_SCRIPTS_DIR = "/scripts/"
 DOCTYPE_START = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{}</title>
-    <link rel="stylesheet" href="/www/style/style.css">
+    <link rel="stylesheet" href="/style/style.css">
 </head>
 <body>"""
 DOCTYPE_GAMES_START = """<!DOCTYPE html>
@@ -23,11 +23,11 @@ DOCTYPE_GAMES_START = """<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{}</title>
-    <script src="/www/scripts/littlejs.min.js"></script>
-    <link rel="stylesheet" href="/www/style/style.css">
+    <script src="/scripts/littlejs.min.js"></script>
+    <link rel="stylesheet" href="/style/style.css">
 </head>
 <body>"""
-DOCTYPE_END = """<script src="/www/scripts/microlight.js"></script>
+DOCTYPE_END = """<script src="/scripts/microlight.js"></script>
 </body>
 </html>"""
 
