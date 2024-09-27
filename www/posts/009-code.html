@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>009 code</title>
+    <link rel="stylesheet" href="/style/style.css">
+</head>
+<body><!-- <h1 id="pole">Pole</h1> -->
+
+<p style="text-align: center;">
+    <img src="/imgs/1000.png" alt="Pole" class="logo-topbar">
+    <br>
+    <strong class="subtitle-topbar">Trying to find my place in this world by system programming and watching yt videos of people building wood furniture</strong>
+</p>
+
+<hr>
+<a href="">Home</a> |
+<a href="/posts/index.html">Posts</a> |
+<a href="">Git</a> |
+<a href="/contact.html">Contact</a> |
+<a href="/about.html">About me</a> |
+<a href="/stacca-stacca.html">Hacker mode</a> |
+<a href="/games/index.html">Random Games</a> 
+<hr>
+
+
+<p>To print &#8220;Hello, World!&#8221; in Python, use the following code:</p>
+
+<pre><code>print("Hello, World!")
+</code></pre>
+
+<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#8217;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+
+<pre><code>#include "stdint.h"
+#include "stddef.h"
+#include "trap.h"
+#include "print.h"
+#include "debug.h"
+#include "memory.h"
+
+void kernel_main() {
+    clean_screen();
+    init_idt();
+    init_memory();
+    init_kvm();
+}
+</code></pre>
+
+<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? </p>
+
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int a = 4 + 2;
+
+    print_screen();
+
+    return 0;
+}
+</code></pre>
+
+<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
+
+<pre><code>[bits 16]       ; real mode
+[org 0x7c00]    ; the bios will look for instructions from this address
+
+start:
+    xor ax, ax  ; set ax to 0
+                ; reset all the segment registers (we don t care about fs and gs) and initialize the stack pointer
+    mov ds, ax  
+    mov es, ax  
+    mov ss, ax  
+    mov sp, 0x7c00  ; between ~0x500 and 0x7c00 there is free memory space, here is where the stack will be  
+
+; from now on we can use stack 
+
+    mov     bx, GREETING_MSG
+    call    bios_println_string
+
+test_disk_extension:
+.check_1:
+    mov [DRIVE_ID], dl      ; save into DRIVE_ID location the value of DL
+    mov ah, 0x41
+    mov bx, 0x55aa
+    int 0x13
+    jnc .support_1          ; if the service is supported, the carry flag is not set
+
+    mov     bx, DE_NOT_SUPPORT_1
+    call    bios_println_string
+    ;jmp     .check_2        ; TODO: probably better to jump at the end, in every non supported feature
+    jmp end
+
+.support_1:
+    mov     bx, DE_SUPPORT_1
+    call    bios_println_string
+
+.check_2:                   ; there is certantly a cleaner way to check it without calling the interrupt two times 
+    mov [DRIVE_ID], dl      ; save into DRIVE_ID location the value of DL
+    mov ah, 0x41
+    mov bx, 0x55aa
+    int 0x13
+
+    cmp bx, 0xaa55
+    je  .support_2
+
+    mov     bx, DE_NOT_SUPPORT_2
+    call    bios_println_string
+    ;jmp     .end
+    jmp end
+
+.support_2:
+    mov     bx, DE_SUPPORT_2
+    call    bios_println_string
+
+; todo: add printing AH in the case it is not supported to get the error
+.end:
+
+load_loader:
+    mov si, READ_PACKET_STRUCTURE   ; this interrupt will populate some values inside the packet structure
+    mov word[si], 0x10              ; size of the structure, 16 as declared later in the data section of this file
+    mov word[si + 2], 5             ; number of sectors, random small value, if not enough increase it
+    ; get the memory location where the loader file is by the segment:offset notation, the physical address is 0x7e00
+    ; idk if it is the standard notation for addressing memory in real mode, I remember I read somewhere that the offset
+    ; should be lower than a certain value but the way it is implemented works and that s what is important 
+    mov word[si + 4], 0x7e00        ; offset
+    mov word[si + 6], 0             ; segment
+    ; the next two values are the lower and higher part of the LBA, in this case the second sector, so 1
+    mov dword[si + 8], 1            ; lo
+    mov dword[si + 12], 0           ; hi
+    mov dl, [DRIVE_ID]
+    mov ah, 0x42
+    int 0x13
+    jnc .no_error                   ; if it fails to read the sector, the carry flag is set
+
+    mov bx, READ_SECTOR_ERROR
+    call bios_println_string
+    jmp end
+
+.no_error:
+    mov bx, LOADER_LOADED_MSG
+    call bios_println_string
+
+    mov dl, [DRIVE_ID]
+    jmp 0x7e00
+
+end:
+    hlt
+    jmp end
+
+; external files
+%include "./utils/bios.asm"
+
+; data
+GREETING_MSG:           db "Boot process started, welcome to Polex", 0 
+DRIVE_ID:               db 0
+DE_SUPPORT_1:           db "Disk extension supported 1/2", 0
+DE_SUPPORT_2:           db "Disk extension supported 2/2", 0
+DE_NOT_SUPPORT_1:       db "Disk extension not supported 1/2", 0
+DE_NOT_SUPPORT_2:       db "Disk extension not supported 2/2", 0
+READ_PACKET_STRUCTURE:  times 16 db 0
+READ_SECTOR_ERROR:      db "Error while reading loader sector", 0
+LOADER_LOADED_MSG:       db "Loader loaded", 0
+
+; fill all the sector up to 512 bytes with zeros and with the data to make the partition bootable
+times (0x1be - ($ - $$)) db 0
+
+; make the partition as a valid "b  ootable" partition (required by some BIOS)
+    db 80h              ; boot indicator, it shows that it is a bootable partition
+    db 0, 2, 0          ; starting CHS (still don't have LBA implemented, so we need to use CHS)
+    db 0f0h             ; partition type
+    db 0ffh,0ffh,0ffh   ; ending CHS
+    dd 1                ; starting sector, 1 is the first
+    dd (20*16*63 - 1)   ; size of the partition
+
+    times (16*3) db 0
+
+    ; magical value to mark a partition as bootable
+    db 0x55
+    db 0xaa
+</code></pre>
+
+<p>This is <code>inline code</code>.</p>
+<p>end.</p>
+
+<hr />
+
+<p>If you consider this website ugly, please read the <a href="/about.html">about me</a> page</p>
+
+<p>This website is made possibile by the amazing libraries <a href="https://github.com/trentm/python-markdown2">markdown2</a> and <a href="https://asvd.github.io/microlight/">microlight</a> which made my static website generator come to life in <em>uno schicco di dita</em></p>
+<script src="/scripts/microlight.js"></script>
+</body>
+</html>

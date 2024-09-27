@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>010 footnotes</title>
+    <link rel="stylesheet" href="/style/style.css">
+</head>
+<body><!-- <h1 id="pole">Pole</h1> -->
+
+<p style="text-align: center;">
+    <img src="/imgs/1000.png" alt="Pole" class="logo-topbar">
+    <br>
+    <strong class="subtitle-topbar">Trying to find my place in this world by system programming and watching yt videos of people building wood furniture</strong>
+</p>
+
+<hr>
+<a href="">Home</a> |
+<a href="/posts/index.html">Posts</a> |
+<a href="">Git</a> |
+<a href="/contact.html">Contact</a> |
+<a href="/about.html">About me</a> |
+<a href="/stacca-stacca.html">Hacker mode</a> |
+<a href="/games/index.html">Random Games</a> 
+<hr>
+
+
+<p>Markdown supports footnotes.[^1]</p>
+
+<p>This is the first paragraph.[^first]</p>
+
+<ul>
+<li>List item one.[^second]</li>
+<li>List item two.[^third]</li>
+</ul>
+
+<h1 id="headerfourth">Header[^fourth]</h1>
+
+<p>Some paragraph with a footnote[^1], and another[^2].</p>
+
+<pre><code>three lines, with some span-level markup like
+_emphasis_, a [link][].
+</code></pre>
+
+<p>Another paragraph with a named footnote[^fn-name].</p>
+
+<p>This paragraph should not have a footnote marker since 
+the footnote is undefined.[^3]</p>
+
+<p>This paragraph should not have a footnote marker since 
+the footnote has already been used before.[^1]</p>
+
+<p>This paragraph links to a footnote with plenty of 
+block-level content.[^block]</p>
+
+<pre><code>*   List item
+
+&gt; Blockquote
+
+    Code block
+</code></pre>
+
+<p>This paragraph host the footnote reference within a 
+footnote test[^reference].</p>
+
+<pre><code>should be impossible.[^impossible]
+
+another footnote, which is not allowed.
+</code></pre>
+<p>end.</p>
+
+<hr />
+
+<p>If you consider this website ugly, please read the <a href="/about.html">about me</a> page</p>
+
+<p>This website is made possibile by the amazing libraries <a href="https://github.com/trentm/python-markdown2">markdown2</a> and <a href="https://asvd.github.io/microlight/">microlight</a> which made my static website generator come to life in <em>uno schicco di dita</em></p>
+<script src="/scripts/microlight.js"></script>
+</body>
+</html>

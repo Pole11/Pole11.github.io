@@ -1,12 +1,12 @@
 .vscode/
 
-out/
-posts/
-misc/
-lib64/
-lib/
-include/
-bin/
+/out/
+/posts/
+/misc/
+/lib64/
+/lib/
+/include/
+/bin/
 
 lib 
 lib64
