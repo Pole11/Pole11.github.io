@@ -56,7 +56,7 @@ index_content += "<ul>"
 
 for i in range(0,5):
     post = posts[i]
-    index_content += "<li><a href=\"/www/posts/" + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
+    index_content += "<li><a href=\"/" + WWW_POSTS_DIR + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
 
 index_content += "</ul>"
 
@@ -88,7 +88,7 @@ posts = sorted(posts)
 post_index_content += "<ul>"
 
 for post in posts:
-    post_index_content += "<li><a href=\"/www/posts/" + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
+    post_index_content += "<li><a href=\"/" + WWW_POSTS_DIR + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
 
 post_index_content += "</ul>"
 

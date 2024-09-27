@@ -1,4 +1,4 @@
-# FIND A NAME
+# Static website generator + my website
 
 ## Todo
 

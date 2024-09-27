@@ -1,0 +1,87 @@
+:not(math, math *) {
+    font-size: 1.1em;
+    font-family: monospace;
+    color: rgb(200, 200, 200, 1);
+}
+
+html {
+    background-color: rgba(20, 20, 20, 1);
+}
+
+body {
+    max-width: 60em;
+    margin: auto;
+    padding: 10px;
+}
+
+code {
+    font-size: 0.9em;
+    font-weight: 500;
+    color: #79ff68;
+    font-family: monospace;
+}
+
+pre {
+    font-family : monospace;
+    white-space : pre;
+    background-color : #1b1b1b;
+    padding: 0.5em;
+}
+
+strong {
+    color: #71e9a0;
+}
+
+em {
+    color: #db71e9;
+}
+
+a {
+    color: #32b0d6
+}
+
+h1 {
+    font-size: 3em;
+}
+
+h2 {
+    font-size: 2.2em;
+}
+
+h3 {
+    font-size: 1.9em;
+}
+
+h4 {
+    font-size: 1.6em;
+}
+
+h5 {
+    font-size: 1.2em;
+}
+
+h6 {
+    font-size: 1em;
+}
+
+#pole {
+    font-size: 4em;
+    text-align: center;
+    color: #ffffff;
+    font-weight: 00;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.subtitle-topbar {
+    color: #ffffff;
+    /*font-family: cursive;*/
+}
+
+.logo-topbar {
+    max-width: 50%;
+    max-height: 18em;
+}
+
+math, math * {
+    font-size: 1em;
+}

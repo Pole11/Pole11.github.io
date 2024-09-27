@@ -1,13 +1,13 @@
 .vscode/
 
 out/
-www/
 posts/
 misc/
 lib64/
-lib64
 lib/
 include/
 bin/
 
+lib 
+lib64
 pyvenv.cfg

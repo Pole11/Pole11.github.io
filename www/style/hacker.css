@@ -1,0 +1,28 @@
+#shell {
+    width: 100%;
+}
+
+#prompt {
+    color: #00ff00;
+    /*animation: blinker 2s infinite step-end;*/
+    font-weight: bold;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+input[type=text] {
+    background-color: transparent;
+    border-color: transparent;
+    font-family: monospace;
+    color: #00ff00;
+    outline: none;
+}
+
+input[type=text]:focus #prompt {
+  animation-play-state: paused;
+}
+
