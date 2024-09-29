@@ -1,8 +1,5 @@
 .vscode/
 
-/out/
-/posts/
-/misc/
 /lib64/
 /lib/
 /include/

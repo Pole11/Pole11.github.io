@@ -1,0 +1,3 @@
+- [x] Task 1 completed
+- [ ] Task 2 not completed
+- [ ] Task 3 not completed

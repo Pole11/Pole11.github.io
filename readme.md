@@ -1,10 +1,10 @@
-# Static website generator + my website
+# Static website generator + Generated static website
 
 ## Todo
 
 - make `ls` command
 - improve cat for long posts
 - write some posts
-- implement seaarch bar
+- implement search bar
 - make some games
-- create a valid mail
+- delete everything in the output directory and recreate from scratch everything

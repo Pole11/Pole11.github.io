@@ -1,39 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>009 code</title>
-    <link rel="stylesheet" href="/style/style.css">
-</head>
-<body><!-- <h1 id="pole">Pole</h1> -->
+To print "Hello, World!" in Python, use the following code:
 
-<p style="text-align: center;">
-    <img src="/imgs/1000.png" alt="Pole" class="logo-topbar">
-    <br>
-    <strong class="subtitle-topbar">Trying to find my place in this world by system programming and watching yt videos of people building wooden furniture</strong>
-</p>
+```python
+print("Hello, World!")
+```
 
-<hr>
-<a href="/">Home</a> |
-<a href="/posts/index.html">Posts</a> |
-<a href="https://github.com/Pole11">Git</a> |
-<a href="/contact.html">Contact</a> |
-<a href="/about.html">About me</a> |
-<a href="/cv.pdf">CV</a> |
-<a href="/stacca-stacca.html">Hacker mode</a> |
-<a href="/games/index.html">Random Games</a> 
-<hr>
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 
-
-<p>To print &#8220;Hello, World!&#8221; in Python, use the following code:</p>
-
-<pre><code>print("Hello, World!")
-</code></pre>
-
-<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#8217;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
-
-<pre><code>#include "stdint.h"
+```
+#include "stdint.h"
 #include "stddef.h"
 #include "trap.h"
 #include "print.h"
@@ -46,24 +20,26 @@ void kernel_main() {
     init_memory();
     init_kvm();
 }
-</code></pre>
+```
 
-<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? </p>
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? 
 
-<pre><code>#include &lt;stdio.h&gt;
+```c
+#include <stdio.h>
 
 int main(void) {
     int a = 4 + 2;
 
     print_screen();
-
+ 
     return 0;
 }
-</code></pre>
+```
 
-<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
 
-<pre><code>[bits 16]       ; real mode
+```
+[bits 16]       ; real mode
 [org 0x7c00]    ; the bios will look for instructions from this address
 
 start:
@@ -179,18 +155,6 @@ times (0x1be - ($ - $$)) db 0
     ; magical value to mark a partition as bootable
     db 0x55
     db 0xaa
-</code></pre>
+```
 
-<p>This is <code>inline code</code>.</p>
-<p>end.</p>
-
-<hr />
-
-<p>If you consider this website ugly, please read the <a href="/about.html">about me</a> page</p>
-
-<p>This website is made possibile by the amazing libraries <a href="https://github.com/trentm/python-markdown2">markdown2</a> and <a href="https://asvd.github.io/microlight/">microlight</a> which made my static website generator come to life in <em>uno schiocco di dita</em></p>
-
-<h1 id="note-this-website-is-under-heavy-development-and-yeah-the-posts-dont-have-any-meaning-apart-from-test-purpose">NOTE: This website is under heavy development. And yeah the posts don&#8217;t have any meaning apart from test purpose</h1>
-<script src="/scripts/microlight.js"></script>
-</body>
-</html>
+This is `inline code`.
