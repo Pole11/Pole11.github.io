@@ -23,7 +23,7 @@ DOCTYPE_GAMES_START = """<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{}</title>
-    <script src="/scripts/littlejs.min.js"></script>
+    <script src="/scripts/p5.min.js"></script>
     <link rel="stylesheet" href="/style/style.css">
 </head>
 <body>"""
@@ -224,7 +224,7 @@ with open(MISC_DIR + "topbar.html", "r") as f:
 games = os.listdir(GAMES_DIR)
 games = sorted(games)
 
-game_index_content += "WIP<ul>"
+game_index_content += "<ul>"
 
 for game in games:
     game_index_content += "<li><a href=\"/games/" + game.replace(".js", ".html") + "\">" + game.replace(".js", "") + "</a></li>"
@@ -255,7 +255,7 @@ for game in games:
         #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
         game_content += content
     
-    game_content += "" # here put the canvas
+    game_content += "<div id='game-div'><main></main></div>" # here put the canvas
 
     # footer
     with open(MISC_DIR + "footer.md", "r") as f:
@@ -264,7 +264,7 @@ for game in games:
         game_content += html
 
     # content
-    game_content += "<script>"
+    game_content += "<script defer>"
     with open(GAMES_DIR + game, "r") as f:
         content = f.read()
         game_content += content

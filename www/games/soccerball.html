@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>soccerball</title>
+    <script src="/scripts/p5.min.js"></script>
+    <link rel="stylesheet" href="/style/style.css">
+</head>
+<body><!-- <h1 id="pole">Pole</h1> -->
+
+<p style="text-align: center;">
+    <img src="/imgs/1000.png" alt="Pole" class="logo-topbar">
+    <br>
+    <strong class="subtitle-topbar">Trying to find my place in this world by system programming and watching yt videos of people building wooden furniture</strong>
+</p>
+
+<hr>
+<a href="/">Home</a> |
+<a href="/posts/index.html">Posts</a> |
+<a href="https://github.com/Pole11">Git</a> |
+<a href="/contact.html">Contact</a> |
+<a href="/about.html">About me</a> |
+<a href="/cv.pdf">CV</a> |
+<a href="/stacca-stacca.html">Hacker mode</a> |
+<a href="/games/index.html">Random Games</a> 
+<hr>
+
+
+<div id='game-div'><main></main></div><p>end.</p>
+
+<hr />
+
+<p>If you consider this website ugly, please read the <a href="/about.html">about me</a> page</p>
+
+<p>This website is made possibile by the amazing libraries <a href="https://github.com/trentm/python-markdown2">markdown2</a> and <a href="https://asvd.github.io/microlight/">microlight</a> which made my static website generator come to life in <em>uno schiocco di dita</em></p>
+
+<h1 id="note-this-website-is-under-heavy-development-and-yeah-the-posts-dont-have-any-meaning-apart-from-test-purpose">NOTE: This website is under heavy development. And yeah the posts don&#8217;t have any meaning apart from test purpose</h1>
+<script defer>let gsize = 0;
+let gwidth = 0;
+let gheight = 0;
+let ballx = 0;
+let bally = 0;
+let ballvy = 0;
+let ballvx = 0;
+let ballweight = 0;
+let gravity = 0;
+let csize = 0;
+let points = 0;
+let maxpoints = 0;
+let img;
+
+// Load the image
+function preload() {
+  img = loadImage('../imgs/superpole.png');
+}
+
+function setup() {
+    p5Div = document.getElementById("game-div");
+    gwidth = Utils.elementWidth(p5Div);
+    gheight = Math.min(window.innerHeight, Utils.elementWidth(p5Div) * 3/4); // windowHeight in p5js contains the same information as window.innerHeight
+    const p5Canvas = createCanvas(gwidth, gheight);
+    p5Canvas.parent(p5Div);
+    
+    gsize = gwidth/gheight;
+    ballvy = 1;
+    ballvx = 0;
+    ballx = gwidth/2;
+    bally = gheight/2;
+    ballweight = 15;
+    gravity = 0.7;
+    csize = 100;
+    points = 0;
+}
+
+function draw() {
+    background(220);
+    frameRate(60);
+
+    ballvy += gravity; 
+    bally += ballvy;
+    ballx += ballvx
+
+    // wall bouncing
+    if (ballx + gsize * csize/2 >= width) {
+        ballvx *= -0.9;
+        ballx = width - gsize * csize/2 - 1;
+        points = 0;
+    } else if (ballx - gsize * csize/2 <= 0) {
+        ballvx *= -0.9;
+        ballx = gsize * csize/2 + 1;
+        points = 0;
+    }
+    if (bally + gsize * csize/2 >= height) {
+        ballvy *= -1;
+        bally = height - gsize * csize/2 - 1;
+        points = 0;
+    } else if (bally - gsize * csize/2 <= 0) {
+        ballvy *= -0.9;
+        bally = gsize * csize/2 + 1;
+        points = 0;
+    }
+
+    textSize(30);
+    text("Points: " + points, 15, 35)
+    text("Highscore: " + maxpoints, 15, 65)
+    image(img, ballx - gsize * csize/2, bally - gsize * csize/2, gsize * csize, gsize * csize);
+}
+
+function mouseClicked() {
+    if (mouseX > ballx - gsize * csize / 2 && mouseX < ballx + gsize * csize / 2 
+        && mouseY > bally - gsize * csize / 2 && mouseY < bally + gsize * csize / 2) { // TODO: make the click detection on a round surface
+        ballvy = -ballweight;
+        ballvx = -(mouseX - ballx)/10;
+        points++;
+        if (points > maxpoints) maxpoints = points;
+    }
+}
+
+class Utils {
+    // Calculate the Width in pixels of a Dom element
+    static elementWidth(element) {
+        return (
+            element.clientWidth -
+            parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-left")) -
+            parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-right"))
+        )
+    }
+
+    // Calculate the Height in pixels of a Dom element
+    static elementHeight(element) {
+        return (
+            element.clientHeight -
+            parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-top")) -
+            parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-bottom"))
+        )
+    }
+}</script><script src="/scripts/microlight.js"></script>
+</body>
+</html>
