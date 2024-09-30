@@ -25,14 +25,14 @@ function setup() {
     const p5Canvas = createCanvas(gwidth, gheight);
     p5Canvas.parent(p5Div);
     
-    gsize = gwidth/gheight;
+    gsize = Math.min(gwidth/gheight, gheight/gwidth);
     ballvy = 1;
     ballvx = 0;
     ballx = gwidth/2;
     bally = gheight/2;
     ballweight = 15;
     gravity = 0.7;
-    csize = width/7;
+    csize = 100;
     points = 0;
 }
 
