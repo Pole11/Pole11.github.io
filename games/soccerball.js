@@ -20,7 +20,8 @@ function preload() {
 function setup() {
     p5Div = document.getElementById("game-div");
     gwidth = Utils.elementWidth(p5Div);
-    gheight = Math.min(window.innerHeight, Utils.elementWidth(p5Div) * 3/4); // windowHeight in p5js contains the same information as window.innerHeight
+    //gheight = Math.min(window.innerHeight, Utils.elementWidth(p5Div) * 3/4); // windowHeight in p5js contains the same information as window.innerHeight
+    gheight = window.innerHeight * 9/10; 
     const p5Canvas = createCanvas(gwidth, gheight);
     p5Canvas.parent(p5Div);
     
@@ -31,7 +32,7 @@ function setup() {
     bally = gheight/2;
     ballweight = 15;
     gravity = 0.7;
-    csize = 100;
+    csize = width/7;
     points = 0;
 }
 
@@ -63,15 +64,16 @@ function draw() {
         points = 0;
     }
 
-    textSize(30);
-    text("Points: " + points, 15, 35)
-    text("Highscore: " + maxpoints, 15, 65)
+    textSize(width/30);
+    text("Points: " + points, width/30, width/20)
+    text("Highscore: " + maxpoints, width/30, width/12)
     image(img, ballx - gsize * csize/2, bally - gsize * csize/2, gsize * csize, gsize * csize);
+
 }
 
 function mouseClicked() {
-    if (mouseX > ballx - gsize * csize / 2 && mouseX < ballx + gsize * csize / 2 
-        && mouseY > bally - gsize * csize / 2 && mouseY < bally + gsize * csize / 2) { // TODO: make the click detection on a round surface
+    if (mouseX > ballx - gsize * csize/2 && mouseX < ballx + gsize * csize/2 
+        && mouseY > bally - gsize * csize/2 && mouseY < bally + gsize * csize/2) { // TODO: make the click detection on a round surface
         ballvy = -ballweight;
         ballvx = -(mouseX - ballx)/10;
         points++;
