@@ -2,7 +2,7 @@
 
 ## Todo
 
-- make `ls` command
+- make commands case insensitive
 - improve cat for long posts
 - write some posts
 - implement search bar
