@@ -138,8 +138,8 @@ function touchStarted() {
                 // down
                 direction = 3;
             } else {
-                // right
-                direction = 2;
+                // up
+                direction = 1;
             }
         }
     }
