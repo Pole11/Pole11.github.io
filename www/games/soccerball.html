@@ -48,6 +48,7 @@ let gravity = 0;
 let csize = 0;
 let points = 0;
 let maxpoints = 0;
+let colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#00ffff", "#ff00ff"];
 let img;
 
 // Load the image
@@ -72,6 +73,8 @@ function setup() {
     gravity = 0.7;
     csize = 100;
     points = 0;
+    const random = Math.floor(Math.random() * colors.length);
+    color = colors[random];
 }
 
 function draw() {
@@ -103,8 +106,11 @@ function draw() {
     }
 
     textSize(width/30);
-    text("Points: " + points, width/30, width/20)
-    text("Highscore: " + maxpoints, width/30, width/12)
+    fill(0,0,0);
+    text("Points: " + points, width/30, width/20);
+    text("Highscore: " + maxpoints, width/30, width/12);
+    fill(color);
+    circle(ballx, bally, gsize * csize);
     image(img, ballx - gsize * csize/2, bally - gsize * csize/2, gsize * csize, gsize * csize);
 
 }
