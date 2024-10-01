@@ -224,7 +224,7 @@ with open(MISC_DIR + "topbar.html", "r") as f:
 games = os.listdir(GAMES_DIR)
 games = sorted(games)
 
-game_index_content += "<ul>"
+game_index_content += "Definitely not over engineered games (for real I mean, please don't look at the implementations)<ul>"
 
 for game in games:
     game_index_content += "<li><a href=\"/games/" + game.replace(".js", ".html") + "\">" + game.replace(".js", "") + "</a></li>"
