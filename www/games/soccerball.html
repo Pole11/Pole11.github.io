@@ -57,7 +57,7 @@ function preload() {
 
 function setup() {
     p5Div = document.getElementById("game-div");
-    gwidth = Utils.elementWidth(p5Div);
+    gwidth = elementWidth(p5Div);
     //gheight = Math.min(window.innerHeight, Utils.elementWidth(p5Div) * 3/4); // windowHeight in p5js contains the same information as window.innerHeight
     gheight = window.innerHeight * 9/10; 
     const p5Canvas = createCanvas(gwidth, gheight);
@@ -68,7 +68,7 @@ function setup() {
     ballvx = 0;
     ballx = gwidth/2;
     bally = gheight/2;
-    ballweight = 15;
+    ballweight = 12;
     gravity = 0.7;
     csize = 100;
     points = 0;
@@ -80,7 +80,15 @@ function draw() {
 
     ballvy += gravity; 
     bally += ballvy;
-    ballx += ballvx
+    ballx += ballvx;
+
+    // handle touch
+    for (let touch of touches) {
+        if (ballKicked(touch.x, touch.y)) {
+            bounceBall();
+            incrementPoints();
+        }
+    }
 
     // wall bouncing
     if (ballx + gsize * csize/2 >= width) {
@@ -110,33 +118,43 @@ function draw() {
 }
 
 function mouseClicked() {
-    if (mouseX > ballx - gsize * csize/2 && mouseX < ballx + gsize * csize/2 
-        && mouseY > bally - gsize * csize/2 && mouseY < bally + gsize * csize/2) { // TODO: make the click detection on a round surface
-        ballvy = -ballweight;
-        ballvx = -(mouseX - ballx)/10;
-        points++;
-        if (points > maxpoints) maxpoints = points;
+    if (ballKicked(ballx, bally)) { // TODO: make the click detection on a round surface
+        bounceBall();
+        incrementPoints();
     }
 }
 
-class Utils {
-    // Calculate the Width in pixels of a Dom element
-    static elementWidth(element) {
-        return (
-            element.clientWidth -
-            parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-left")) -
-            parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-right"))
-        )
-    }
+function bounceBall() {
+    ballvy = -ballweight;
+    ballvx = -(mouseX - ballx)/10;
+}
 
-    // Calculate the Height in pixels of a Dom element
-    static elementHeight(element) {
-        return (
-            element.clientHeight -
-            parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-top")) -
-            parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-bottom"))
-        )
-    }
-}</script><script src="/scripts/microlight.js"></script>
+function incrementPoints() {
+    points++;
+    if (points > maxpoints) maxpoints = points;
+}
+
+function ballKicked(x, y) {
+    return mouseX > x - gsize * csize/1.5 && mouseX < x + gsize * csize/1.5 && mouseY > y - gsize * csize/1.5 && mouseY < y + gsize * csize/1.5;
+}
+
+// Calculate the Width in pixels of a Dom element
+function elementWidth(element) {
+    return (
+        element.clientWidth -
+        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-left")) -
+        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-right"))
+    )
+}
+
+// Calculate the Height in pixels of a Dom element
+function elementHeight(element) {
+    return (
+        element.clientHeight -
+        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-top")) -
+        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-bottom"))
+    )
+}
+</script><script src="/scripts/microlight.js"></script>
 </body>
 </html>
