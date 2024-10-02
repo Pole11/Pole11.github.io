@@ -122,17 +122,21 @@ function keyPressed() {
 
 function touchStarted() {
     // handle touch
-    if (touch.y < m * touch.x && touch.y < -m * touch.x + height) {
-        // up
-        direction = 1;
-    } else if (touch.y < m * touch.x && touch.y > -m * touch.x + height) {
-        // right
-        direction = 2;
-    } else if (touch.y > m * touch.x && touch.y < -m * touch.x + height) {
-        // left
-        direction = 4;
-    } else {
-        direction = 3;
+    let m = height / width;
+    for (let touch of touches) {
+          // handle touch
+        if (touch.y < m * touch.x && touch.y < -m * touch.x + height) {
+            // up
+            direction = 1;
+        } else if (touch.y < m * touch.x && touch.y > -m * touch.x + height) {
+            // right
+            direction = 2;
+        } else if (touch.y > m * touch.x && touch.y < -m * touch.x + height) {
+            // left
+            direction = 4;
+        } else {
+            direction = 3;
+        }
     }
 }
 
