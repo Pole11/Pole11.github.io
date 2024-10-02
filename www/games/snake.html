@@ -160,26 +160,17 @@ function keyPressed() {
 
 function touchStarted() {
     // handle touch
-    let m = width / height;
-    for (let touch of touches) {
-        // use touch.x touch.y
-        if (m * touch.x - height/2 > touch.y) {
-            if (-m * touch.x < touch.y) {
-                // left
-                direction = 4;
-            } else {
-                // up
-                direction = 1;
-            }
-        } else {
-            if (-m * touch.x < touch.y) {
-                // down
-                direction = 3;
-            } else {
-                // up
-                direction = 1;
-            }
-        }
+    if (touch.y < m * touch.x && touch.y < -m * touch.x + height) {
+        // up
+        direction = 1;
+    } else if (touch.y < m * touch.x && touch.y > -m * touch.x + height) {
+        // right
+        direction = 2;
+    } else if (touch.y > m * touch.x && touch.y < -m * touch.x + height) {
+        // left
+        direction = 4;
+    } else {
+        direction = 3;
     }
 }
 
