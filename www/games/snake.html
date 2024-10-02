@@ -163,7 +163,7 @@ function touchStarted() {
     let m = width / height;
     for (let touch of touches) {
         // use touch.x touch.y
-        if (touch.x > m * touch.y - height/2) {
+        if (touch.x > m * touch.y + height/2) {
             if (touch.x < -m * touch.y) {
                 // left
                 direction = 4;
