@@ -51,6 +51,7 @@ let direction = 0; // 0 means stopped, 1 is up, 2 is right, 3 is down, 4 is left
 let body = [];
 let tempbody = [];
 let points = 0;
+let bodyincrement = 0;
 let maxpoints = 0;
 
 // Load the image
@@ -76,6 +77,7 @@ function setup() {
     body = [];
     points = 0;
     maxpoints = 0;
+    bodyincrement = 4;
     foodx = random(0 + foodsize/2, width - foodsize/2);
     foody = random(0 + foodsize/2, height - foodsize/2);
     deltaspeed = 0.05;
@@ -124,10 +126,18 @@ function draw() {
         foodx = random(0 + foodsize/2, width - foodsize/2);
         foody = random(0 + foodsize/2, height - foodsize/2);
         points++;
-        if (points > maxpoints) maxpoints = points; 
-        body.push({"x": snakex, "y": snakey});
+        if (points > maxpoints) maxpoints = points;
+        for (let i = 0; i < bodyincrement; i++) {
+            body.push({"x": tempbody[i].x, "y": tempbody[i].y})
+        } 
         speed += deltaspeed;
     }
+
+    // make body longer
+    tempbody.push({"x": snakex, "y": snakey});
+    if (tempbody.length > bodyincrement) tempbody.shift(); // remove first element
+
+    // body detection
 
     stroke("#000000");
     strokeWeight(1);
@@ -165,15 +175,15 @@ function touchStarted() {
           // handle touch
         if (touch.y < m * touch.x && touch.y < -m * touch.x + height) {
             // up
-            direction = 1;
+            if (direction != 3) direction = 1;
         } else if (touch.y < m * touch.x && touch.y > -m * touch.x + height) {
             // right
-            direction = 2;
+            if (direction != 4) direction = 2;
         } else if (touch.y > m * touch.x && touch.y < -m * touch.x + height) {
             // left
-            direction = 4;
+            if (direction != 2) direction = 4;
         } else {
-            direction = 3;
+            if (direction != 1) direction = 3;
         }
     }
 }
