@@ -125,8 +125,8 @@ function touchStarted() {
     let m = width / height;
     for (let touch of touches) {
         // use touch.x touch.y
-        if (touch.x > m * touch.y + height/2) {
-            if (touch.x < -m * touch.y) {
+        if (m * touch.x - height/2 > touch.y) {
+            if (-m * touch.x < touch.y) {
                 // left
                 direction = 4;
             } else {
@@ -134,7 +134,7 @@ function touchStarted() {
                 direction = 1;
             }
         } else {
-            if (touch.x < -m * touch.y) {
+            if (-m * touch.x < touch.y) {
                 // down
                 direction = 3;
             } else {
