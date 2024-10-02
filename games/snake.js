@@ -39,7 +39,7 @@ function setup() {
     body = [];
     points = 0;
     maxpoints = 0;
-    bodyincrement = 4;
+    bodyincrement = 3;
     foodx = random(0 + foodsize/2, width - foodsize/2);
     foody = random(0 + foodsize/2, height - foodsize/2);
     deltaspeed = 0.05;
@@ -90,7 +90,7 @@ function draw() {
         points++;
         if (points > maxpoints) maxpoints = points;
         for (let i = 0; i < bodyincrement; i++) {
-            body.push({"x": tempbody[i].x, "y": tempbody[i].y})
+            body.push({"x": tempbody[i].x, "y": tempbody[i].y});
         } 
         speed += deltaspeed;
     }
