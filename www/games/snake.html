@@ -70,17 +70,10 @@ function setup() {
     gsize = Math.min(gwidth/gheight, gheight/gwidth);
     snakesize = gsize * 40;
     foodsize = gsize * 35;
-    snakex = width/2 - snakesize/2;
-    snakey = height/2 - snakesize/2;
-    direction = 0;
-    speed = 4;
-    body = [];
-    points = 0;
     maxpoints = 0;
-    bodyincrement = 3;
-    foodx = random(0 + foodsize/2, width - foodsize/2);
-    foody = random(0 + foodsize/2, height - foodsize/2);
+    bodyincrement = 10;
     deltaspeed = 0.05;
+    gameReset();
 }
 
 function draw() {
@@ -138,6 +131,16 @@ function draw() {
     if (tempbody.length > bodyincrement) tempbody.shift(); // remove first element
 
     // body detection
+    for (let i = 1; i < body.length; i++) {
+        if (body[i].x == snakex && body[i].y == snakey) {
+            gameReset();
+        }
+    }
+
+    textSize(width/30);
+    fill(0,0,0);
+    text("Points: " + points, width/30, width/20);
+    text("Highscore: " + maxpoints, width/30, width/12);
 
     stroke("#000000");
     strokeWeight(1);
@@ -186,6 +189,17 @@ function touchStarted() {
             if (direction != 1) direction = 3;
         }
     }
+}
+
+function gameReset() {
+    snakex = width/2 - snakesize/2;
+    snakey = height/2 - snakesize/2;
+    direction = 0;
+    speed = 4;
+    body = [];
+    points = 0; 
+    foodx = random(0 + foodsize/2, width - foodsize/2);
+    foody = random(0 + foodsize/2, height - foodsize/2);
 }
 
 // Calculate the Width in pixels of a Dom element
