@@ -85,6 +85,7 @@ posts = os.listdir(POSTS_DIR)
 posts = filter(lambda p: p[0] != '.', posts)
 posts = sorted(posts)
 
+post_index_content += "<p>Sometimes when I am happy, I write a post. here is a list of them: </p>"
 post_index_content += "<ul>"
 
 for post in posts:
