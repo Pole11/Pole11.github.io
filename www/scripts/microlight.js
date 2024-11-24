@@ -121,7 +121,7 @@
                             node = _document.createElement('span')
                         ).setAttribute('style', [
                             // 0: not formatted
-                            '',
+                            'color: #eeeeee;',
                             // 1: keywords
                             'color: #ff5733;',
                             // 2: punctuation

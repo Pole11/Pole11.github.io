@@ -3,6 +3,8 @@ let gwidth = 0;
 let gheight = 0;
 let snakex = 0;
 let snakey = 0;
+let snakenosex = 0;
+let snakenosey = 0;
 let speed = 0;
 let deltaspeed = 0;
 let foodx = 0;
@@ -42,15 +44,24 @@ function draw() {
     background(220);
     frameRate(60);
 
+    snakenosey
     // handle direction
     if (direction == 1) {
         snakey -= speed;
+        snakenosey = snakey - snakesize/2;
+        snakenosex = snakex;
     } else if (direction == 2) {
         snakex += speed;
+        snakenosey = snakey;
+        snakenosex = snakex + snakesize/2;
     } else if (direction == 3) {
         snakey += speed;
+        snakenosey = snakey + snakesize/2;
+        snakenosex = snakex;
     } else if (direction == 4) {
         snakex -= speed;
+        snakenosey = snakey;
+        snakenosex = snakex - snakesize/2;
     }
 
     // pacman effect
@@ -77,14 +88,29 @@ function draw() {
     body[0] = {"x": snakex, "y": snakey};
 
     // check if food eaten
+    // if (snakex > foodx - foodsize/2 && snakex < foodx + foodsize/2 && snakey > foody - foodsize/2 && snakey < foody + foodsize/2) {
+    //     foodx = random(0 + foodsize/2, width - foodsize/2);
+    //     foody = random(0 + foodsize/2, height - foodsize/2);
+    //     points++;
+    //     if (points > maxpoints) maxpoints = points;
+    //     for (let i = 0; i < bodyincrement; i++) {
+    //         body.push({"x": tempbody[i].x, "y": tempbody[i].y});
+    //     } 
+    //     speed += deltaspeed;
+    // }
+
+    // check if food eaten
     if (snakex > foodx - foodsize/2 && snakex < foodx + foodsize/2 && snakey > foody - foodsize/2 && snakey < foody + foodsize/2) {
         foodx = random(0 + foodsize/2, width - foodsize/2);
         foody = random(0 + foodsize/2, height - foodsize/2);
         points++;
         if (points > maxpoints) maxpoints = points;
+
+        // Initialize new body segments at the current head position
         for (let i = 0; i < bodyincrement; i++) {
-            body.push({"x": tempbody[i].x, "y": tempbody[i].y});
-        } 
+            body.push({"x": snakex, "y": snakey});
+        }
+        
         speed += deltaspeed;
     }
 
@@ -93,9 +119,21 @@ function draw() {
     if (tempbody.length > bodyincrement) tempbody.shift(); // remove first element
 
     // body detection
-    for (let i = 1; i < body.length; i++) {
-        if (body[i].x == snakex && body[i].y == snakey) {
+    // for (let i = 1; i < body.length; i++) {
+    //     if (body[i].x == snakex && body[i].y == snakey) {
+    //         gameReset();
+    //     }
+    // }
+
+    // body detection (skip detection for new body segments)
+    for (let i = 1; i < body.length - bodyincrement; i++) {
+        let distX = Math.abs(body[i].x - snakenosex);
+        let distY = Math.abs(body[i].y - snakenosey);
+
+        // Check collision only if the body segment is visibly separated from the head
+        if (distX < snakesize/2 && distY < snakesize/2) {
             gameReset();
+            break;
         }
     }
 

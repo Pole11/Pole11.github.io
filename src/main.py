@@ -47,6 +47,7 @@ with open(MISC_DIR + "home.md", "r") as f:
 
 # posts list
 posts = os.listdir(POSTS_DIR)
+posts = [post for post in posts if post.endswith(".md")]
 posts = filter(lambda p: p[0] != '.', posts)
 posts = sorted(posts)
 posts = reversed(posts)
@@ -54,7 +55,7 @@ posts = list(posts)
 
 index_content += "<ul>"
 
-for i in range(0,5):
+for i in range(0,min(len(posts), 5)):
     post = posts[i]
     index_content += "<li><a href=\"/posts/" + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
 
@@ -82,10 +83,11 @@ with open(MISC_DIR + "topbar.html", "r") as f:
 
 # posts list
 posts = os.listdir(POSTS_DIR)
+posts = [post for post in posts if post.endswith(".md")]
 posts = filter(lambda p: p[0] != '.', posts)
 posts = sorted(posts)
 
-post_index_content += "<p>Sometimes when I am happy, I write a post. here is a list of them: </p>"
+post_index_content += "<p>Sometimes, when I am happy, I write a post. Here is a list of them: </p>"
 post_index_content += "<ul>"
 
 for post in posts:
@@ -106,6 +108,7 @@ with open(WWW_POSTS_DIR + "index.html", "w") as f:
 
 # POST
 posts = os.listdir(POSTS_DIR)
+posts = [post for post in posts if post.endswith(".md")]
 posts = filter(lambda p: p[0] != '.', posts)
 
 for post in posts:
@@ -188,6 +191,7 @@ with open(WWW_DIR + "about.html", "w") as f:
 
 # HACKER MODE
 posts = os.listdir(POSTS_DIR)
+posts = [post for post in posts if post.endswith(".md")]
 shell_content = ""
 
 with open(MISC_DIR + "shell.js") as f:

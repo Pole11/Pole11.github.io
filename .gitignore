@@ -1,9 +1,9 @@
 .vscode/
 
-/lib64/
-/lib/
-/include/
-/bin/
+.venv/lib64/
+.venv/lib/
+.venv/include/
+.venv/bin/
 
 lib 
 lib64

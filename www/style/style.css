@@ -85,3 +85,7 @@ h6 {
 math, math * {
     font-size: 1em;
 }
+
+code {
+    font-size: larger;
+}
