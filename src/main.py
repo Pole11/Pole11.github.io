@@ -53,13 +53,15 @@ posts = sorted(posts)
 posts = reversed(posts)
 posts = list(posts)
 
-index_content += "<ul>"
+if len(posts) > 0:
+    index_content += "<p>Here is a list of my recent posts:</p>"
+    index_content += "<ul>"
 
-for i in range(0,min(len(posts), 5)):
-    post = posts[i]
-    index_content += "<li><a href=\"/posts/" + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
+    for i in range(0,min(len(posts), 5)):
+        post = posts[i]
+        index_content += "<li><a href=\"/posts/" + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
 
-index_content += "</ul>"
+    index_content += "</ul>"
 
 # footer
 with open(MISC_DIR + "footer.md", "r") as f:
@@ -87,7 +89,7 @@ posts = [post for post in posts if post.endswith(".md")]
 posts = filter(lambda p: p[0] != '.', posts)
 posts = sorted(posts)
 
-post_index_content += "<p>Sometimes, when I am happy, I write a post. Here is a list of them: </p>"
+post_index_content += "<p>Sometimes, when I remember I have a website, I write a post. Here is a list of them: </p>"
 post_index_content += "<ul>"
 
 for post in posts:
@@ -229,7 +231,7 @@ with open(MISC_DIR + "topbar.html", "r") as f:
 games = os.listdir(GAMES_DIR)
 games = sorted(games)
 
-game_index_content += "Definitely not over engineered games (for real I mean, please don't look at the implementations)<ul>"
+game_index_content += "Definitely badly games (for real I mean, please don't look at the implementations)<ul>"
 
 for game in games:
     game_index_content += "<li><a href=\"/games/" + game.replace(".js", ".html") + "\">" + game.replace(".js", "") + "</a></li>"

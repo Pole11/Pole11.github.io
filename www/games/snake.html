@@ -31,8 +31,6 @@
 
 <hr />
 
-<p>If you consider this website ugly, please read the <a href="/about.html">about me</a> page</p>
-
 <p>This website is made possibile by the amazing libraries <a href="https://github.com/trentm/python-markdown2">markdown2</a> and <a href="https://asvd.github.io/microlight/">microlight</a> which made my static website generator come to life in <em>uno schiocco di dita</em></p>
 <script defer>let gsize = 0;
 let gwidth = 0;
@@ -56,13 +54,11 @@ let maxpoints = 0;
 
 // Load the image
 function preload() {
-  img = loadImage('../imgs/superpole.png');
 }
 
 function setup() {
     p5Div = document.getElementById("game-div");
     gwidth = elementWidth(p5Div);
-    //gheight = Math.min(window.innerHeight, Utils.elementWidth(p5Div) * 3/4); // windowHeight in p5js contains the same information as window.innerHeight
     gheight = window.innerHeight * 9/10; 
     const p5Canvas = createCanvas(gwidth, gheight);
     p5Canvas.parent(p5Div);
@@ -72,7 +68,7 @@ function setup() {
     foodsize = gsize * 35;
     maxpoints = 0;
     bodyincrement = 10;
-    deltaspeed = 0.05;
+    deltaspeed = 0.15;
     gameReset();
 }
 
@@ -80,7 +76,7 @@ function draw() {
     background(220);
     frameRate(60);
 
-    snakenosey
+    let snakenosey;
     // handle direction
     if (direction == 1) {
         snakey -= speed;
@@ -124,18 +120,6 @@ function draw() {
     body[0] = {"x": snakex, "y": snakey};
 
     // check if food eaten
-    // if (snakex > foodx - foodsize/2 && snakex < foodx + foodsize/2 && snakey > foody - foodsize/2 && snakey < foody + foodsize/2) {
-    //     foodx = random(0 + foodsize/2, width - foodsize/2);
-    //     foody = random(0 + foodsize/2, height - foodsize/2);
-    //     points++;
-    //     if (points > maxpoints) maxpoints = points;
-    //     for (let i = 0; i < bodyincrement; i++) {
-    //         body.push({"x": tempbody[i].x, "y": tempbody[i].y});
-    //     } 
-    //     speed += deltaspeed;
-    // }
-
-    // check if food eaten
     if (snakex > foodx - foodsize/2 && snakex < foodx + foodsize/2 && snakey > foody - foodsize/2 && snakey < foody + foodsize/2) {
         foodx = random(0 + foodsize/2, width - foodsize/2);
         foody = random(0 + foodsize/2, height - foodsize/2);
@@ -153,13 +137,6 @@ function draw() {
     // make body longer
     tempbody.push({"x": snakex, "y": snakey});
     if (tempbody.length > bodyincrement) tempbody.shift(); // remove first element
-
-    // body detection
-    // for (let i = 1; i < body.length; i++) {
-    //     if (body[i].x == snakex && body[i].y == snakey) {
-    //         gameReset();
-    //     }
-    // }
 
     // body detection (skip detection for new body segments)
     for (let i = 1; i < body.length - bodyincrement; i++) {
@@ -231,7 +208,7 @@ function gameReset() {
     snakex = width/2 - snakesize/2;
     snakey = height/2 - snakesize/2;
     direction = 0;
-    speed = 4;
+    speed = 8;
     body = [];
     points = 0; 
     foodx = random(0 + foodsize/2, width - foodsize/2);

@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     const shell = document.getElementById('shell');
+    let prepopulate_help = true;
 
     const commands = {
-        help: () => "Available commands: help, echo, clear, cat, ls (they all work in a very simple way, so most of the flags are not implemented and never will be)",
+        help: () => "Available commands: help, echo, clear, cat, ls",
         echo: (args) => { 
             return args.join(' '); 
         },
@@ -55,16 +56,26 @@ document.addEventListener('DOMContentLoaded', function () {
         prompt.innerText = '/home/pole/posts> ';
         inputLine.appendChild(prompt);
 
-        const userInput = document.createElement('input');
+        const userInput = document.createElement('textarea');
+        if (prepopulate_help) {
+            userInput.value = "help ";
+            prepopulate_help = false;
+        }   
         userInput.id = 'user-input';
-        userInput.type = 'text';
+        //userInput.type = 'text';
         userInput.autofocus = true;
         userInput.addEventListener('keydown', handleInput);
+        userInput.addEventListener('input', () => autoAdjustHeight(userInput));        
+        
         inputLine.appendChild(userInput);
-
         shell.appendChild(inputLine);
         userInput.focus();
     };
+
+    function autoAdjustHeight(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
 
     let history = [];
     let historyIndex = -1;

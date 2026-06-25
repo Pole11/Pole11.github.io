@@ -1,7 +1,9 @@
-So `whoami`? Well, I am an engineer, a computer science engineer ... a super passionate computer science engineer. Ok that's how I like it.
+`whoami` you might ask.
 
-I have a lot of sensibility regarding the theme of ethic software development. What I consider as "ethic" is using *Open Source* licenses. I love using and developing Open Source software.
+I am **Riccardo Polelli**, but I am bettern known as **Pole**.
 
-In the future I would like to have a **positive impact on the world**.
+I am very passionate to understand *how* computers work. My main interest is about **low level topics** like *computer architectures*, *compilers*, *firmware* and so on. I both enjoy working on *microcontroller scale* and *Data Center scale*. 
 
-I am **nostalgic** of the period from the 80s to the 2000s even though I was born in the late 2002. That's why this website looks ugly, I wanted it to have a *classic look*. I think it is really cool. Plus I don't think that complexity (as we are often used to see) in such a case is needed. And for the most of its functionality it does not use javascript. So I am sure a *MAC SE/30* would have no problem at all rendering it.
+Lately I am getting more and more passionate about **Data Center Networking**, which I consider as a playground for grown kids that enjoy computer and networks.
+
+I recently fell in with love [**middle distance running**](https://www.fidal.it/atleta/Riccardo-Polelli/drGRkpmla2o) and going for endless bike rides with my friends (follow me on [strava](https://strava.app.link/auXqNEQVf4b)).  

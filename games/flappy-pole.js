@@ -1,0 +1,210 @@
+let gsize = 0;
+let gwidth = 0;
+let gheight = 0;
+let polex = 0;
+let poley = 0;
+let polevy = 0;
+let poleweight = 0;
+let gravity = 0;
+let csize = 0;
+let points = 0;
+let maxpoints = 0;
+let game_started = false;
+let img;
+let ticks = 0;
+let pipes = [];
+
+class Pipe {
+    constructor() {
+        this.width = 80;
+        this.x = width;
+        this.gapHeight = csize*3;
+        this.gapY = random(
+            this.gapHeight / 2 + 50,
+            height - this.gapHeight / 2 - 50
+        );
+        this.speed = 4;
+        this.scored = false;
+    }
+
+    update() {
+        this.x -= this.speed;
+    }
+
+    show() {
+        fill(0, 180, 0);
+
+        // Top pipe
+        rect(
+            this.x,
+            0,
+            this.width,
+            this.gapY - this.gapHeight / 2
+        );
+
+        // Bottom pipe
+        rect(
+            this.x,
+            this.gapY + this.gapHeight / 2,
+            this.width,
+            height
+        );
+    }
+
+    offscreen() {
+        return this.x + this.width < 0;
+    }
+
+    hits(x, y, radius) {
+        const insideX =
+            x + radius > this.x &&
+            x - radius < this.x + this.width;
+
+        const insideTop =
+            y - radius < this.gapY - this.gapHeight / 2;
+
+        const insideBottom =
+            y + radius > this.gapY + this.gapHeight / 2;
+
+        return insideX && (insideTop || insideBottom);
+    }
+}
+
+// Load the image
+function preload() {
+  img = loadImage('../imgs/1000.png');
+}
+
+function setup() {
+    p5Div = document.getElementById("game-div");
+    gwidth = elementWidth(p5Div);
+    gheight = window.innerHeight * 9/10; 
+    const p5Canvas = createCanvas(gwidth, gheight);
+    p5Canvas.parent(p5Div);
+    
+    gsize = Math.min(gwidth/gheight, gheight/gwidth);
+    polevy = 1;
+    polex = gwidth/6;
+    poley = gheight/2;
+    poleweight = 8;
+    gravity = 0.4;
+    csize = 120;
+    points = 0;
+    ticks = 0;
+
+    pipes = [];
+    pipes.push(new Pipe());
+}
+
+function draw() {
+    background(220);
+    frameRate(60);
+
+    if (game_started) {
+        polevy += gravity; 
+        poley += polevy;
+    }
+    
+    // wall bouncing
+    if (poley + gsize * csize/2 >= height) {
+        gameReset();
+    } else if (poley - gsize * csize/2 <= 0) {
+        gameReset();
+    }
+
+    if (ticks == 120 && game_started) {
+        pipes.push(new Pipe());
+        ticks = 0;
+    }
+    if (game_started) {
+        ticks++;
+    }
+
+    for (let i = pipes.length - 1; i >= 0 && game_started; i--) {
+        pipes[i].update();
+        pipes[i].show();
+
+        if (pipes[i].hits(
+            polex,
+            poley,
+            gsize * csize / 2
+        )) {
+            gameReset();
+        }
+
+        if (
+            !pipes[i].scored &&
+            pipes[i].x + pipes[i].width < polex
+        ) {
+            pipes[i].scored = true;
+            incrementPoints();
+        }
+
+        if (pipes[i].offscreen()) {
+            pipes.splice(i, 1);
+        }
+    }
+
+    textSize(width/30);
+    fill(0,0,0);
+    text("Points: " + points, width/30, width/20);
+    text("Highscore: " + maxpoints, width/30, width/12);
+    image(img, polex - gsize * csize/2, poley - gsize * csize/2, gsize * csize, gsize * csize);
+}
+
+function mouseClicked() {
+    game_started = true;
+    makePoleFly();
+}
+
+function touchStarted() {
+    // handle touch
+    for (let touch of touches) {
+        if (poleKicked(touch.x, touch.y)) {
+            makePoleFly();
+            incrementPoints();
+        }
+    }
+}
+
+function makePoleFly() {
+    polevy = -poleweight;
+}
+
+function incrementPoints() {
+    points++;
+    if (points > maxpoints) maxpoints = points;
+}
+
+function gameReset() {
+    gsize = Math.min(gwidth/gheight, gheight/gwidth);
+    polevy = 1;
+    polex = gwidth/6;
+    poley = gheight/2;
+    poleweight = 8;
+    gravity = 0.4;
+    csize = 120;
+    points = 0;
+    game_started = false;
+    pipes = [];
+    pipes.push(new Pipe());
+    ticks = 0;
+}
+
+// Calculate the Width in pixels of a Dom element
+function elementWidth(element) {
+    return (
+        element.clientWidth -
+        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-left")) -
+        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-right"))
+    )
+}
+
+// Calculate the Height in pixels of a Dom element
+function elementHeight(element) {
+    return (
+        element.clientHeight -
+        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-top")) -
+        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-bottom"))
+    )
+}

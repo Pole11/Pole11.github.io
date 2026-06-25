@@ -72,7 +72,7 @@ The tasks I needed to accomplish are:</p>
 
 <h4 id="what-is-going-on-with-interrupt-handlers">What is going on with interrupt handlers?</h4>
 
-<p>Well...the main problem I was facing was that the variable containg the tick count, in FreeRTOS called <code>xTickCount</code> was constantly 0. The reason why this happens is that the function that increments this value was not called. This function is called by the <em>machine timer interrupt handler</em>. </p>
+<p>Well&#8230;the main problem I was facing was that the variable containg the tick count, in FreeRTOS called <code>xTickCount</code> was constantly 0. The reason why this happens is that the function that increments this value was not called. This function is called by the <em>machine timer interrupt handler</em>. </p>
 
 <p>So yeah, even me understood that machine timer handler was not <em>installed</em> correctly.</p>
 
@@ -84,7 +84,7 @@ The tasks I needed to accomplish are:</p>
 
 <p>Once the interrupt vector table was done, even if I <strong>pruned</strong> a good part of Renesas code into a much more simple and friendly <em>array of function pointers</em>, the next step is the bad cousin that comes from far away of interrupts: <em>exceptions</em>.</p>
 
-<h4 id="and-with-exception-handlers-the-bright-days">... and with exception handlers? The bright days</h4>
+<h4 id="and-with-exception-handlers-the-bright-days">&#8230; and with exception handlers? The bright days</h4>
 
 <p>The fix was one of the things that requires to modify one line of code but it takes a lot of experience to know that you need to write it.</p>
 
@@ -96,8 +96,6 @@ The tasks I needed to accomplish are:</p>
 <p>end.</p>
 
 <hr />
-
-<p>If you consider this website ugly, please read the <a href="/about.html">about me</a> page</p>
 
 <p>This website is made possibile by the amazing libraries <a href="https://github.com/trentm/python-markdown2">markdown2</a> and <a href="https://asvd.github.io/microlight/">microlight</a> which made my static website generator come to life in <em>uno schiocco di dita</em></p>
 <script src="/scripts/microlight.js"></script>
