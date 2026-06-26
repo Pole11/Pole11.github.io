@@ -68,7 +68,8 @@ function setup() {
     foodsize = gsize * 35;
     maxpoints = 0;
     bodyincrement = 10;
-    deltaspeed = 0.15;
+    deltaspeed = gsize * 0.15;
+    
     gameReset();
 }
 
@@ -208,7 +209,7 @@ function gameReset() {
     snakex = width/2 - snakesize/2;
     snakey = height/2 - snakesize/2;
     direction = 0;
-    speed = 8;
+    speed = gsize * 8;
     body = [];
     points = 0; 
     foodx = random(0 + foodsize/2, width - foodsize/2);

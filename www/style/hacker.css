@@ -34,3 +34,7 @@ textarea:focus #prompt {
   animation-play-state: paused;
 }
 
+.suggestion {
+  color: rgb(120, 120, 120);
+}
+

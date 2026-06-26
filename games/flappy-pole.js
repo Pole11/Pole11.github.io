@@ -20,8 +20,8 @@ class Pipe {
         this.x = width;
         this.gapHeight = csize*3;
         this.gapY = random(
-            this.gapHeight / 2 + 50,
-            height - this.gapHeight / 2 - 50
+            this.gapHeight / 2 + gsize*20,
+            height - this.gapHeight / 2 - gsize*20
         );
         this.speed = 4;
         this.scored = false;
@@ -82,18 +82,7 @@ function setup() {
     const p5Canvas = createCanvas(gwidth, gheight);
     p5Canvas.parent(p5Div);
     
-    gsize = Math.min(gwidth/gheight, gheight/gwidth);
-    polevy = 1;
-    polex = gwidth/6;
-    poley = gheight/2;
-    poleweight = 8;
-    gravity = 0.4;
-    csize = 120;
-    points = 0;
-    ticks = 0;
-
-    pipes = [];
-    pipes.push(new Pipe());
+    gameReset();
 }
 
 function draw() {
@@ -178,12 +167,12 @@ function incrementPoints() {
 
 function gameReset() {
     gsize = Math.min(gwidth/gheight, gheight/gwidth);
-    polevy = 1;
+    polevy = gsize * 1;
     polex = gwidth/6;
     poley = gheight/2;
-    poleweight = 8;
-    gravity = 0.4;
-    csize = 120;
+    poleweight = gsize * 8;
+    gravity = gsize * 0.4;
+    csize = gsize * 120;
     points = 0;
     game_started = false;
     pipes = [];

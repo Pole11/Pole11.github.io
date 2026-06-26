@@ -60,9 +60,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (prepopulate_help) {
             userInput.value = "help ";
             prepopulate_help = false;
-        }   
+        }
+        
         userInput.id = 'user-input';
-        //userInput.type = 'text';
         userInput.autofocus = true;
         userInput.addEventListener('keydown', handleInput);
         userInput.addEventListener('input', () => autoAdjustHeight(userInput));        
@@ -81,7 +81,29 @@ document.addEventListener('DOMContentLoaded', function () {
     let historyIndex = -1;
     
     const handleInput = (event) => {
-        if (event.key === 'Enter') {
+        if (event.key === "Tab") {
+            event.preventDefault();
+
+            const input = event.target.value;
+            const parts = input.split(" ");
+            const current = parts[parts.length - 1];
+
+            let matches;
+            if (input == "") {
+                matches = Object.keys(commands).filter(item => item.startsWith(current));
+            } else {
+                matches = Object.keys(data).filter(item => item.startsWith(current));  
+            }
+
+            if (matches.length === 1) {
+                parts[parts.length - 1] = matches[0];
+                event.target.value = parts.join(" ");
+            } else if (matches.length > 1) {
+                clearOutput();
+                addOutput(matches.join(" "), "suggestion");
+            }
+        } else if (event.key === 'Enter') {
+            event.preventDefault();
             const input = event.target.value.trim();
             history.push(input);
             historyIndex = history.length;
@@ -92,6 +114,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             event.target.removeEventListener('keydown', handleInput);
             event.target.disabled = true;
+
+            outputLines = document.getElementsByClassName("output-line");
+            for (let i = 0; i < outputLines.length; i++) {
+                outputLines[i].className = outputLines[i].className.replace("output-line", "output-line-consolidated");
+            }
+
             addNewLine();
         } else if (event.key === 'ArrowUp') {
             if (historyIndex > 0) {
@@ -121,12 +149,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    const addOutput = (output) => {
+    const clearOutput = () => {
+        outputLines = document.getElementsByClassName("output-line");
+        for (let i = 0; i < outputLines.length; i++) {
+            outputLines[i].remove();
+        }
+    }
+
+    const addOutput = (output, additionalClassName) => {
         const outputLine = document.createElement('div');
+        if (additionalClassName) {
+            outputLine.className = additionalClassName;
+        }
+        outputLine.className += " output-line";
         outputLine.innerHTML = output;
         shell.appendChild(outputLine);
         microlight.reset();
-        //document.getElementById("divFirst").scrollIntoView();
     };
 
     addNewLine();
