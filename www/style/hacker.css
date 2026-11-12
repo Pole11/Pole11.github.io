@@ -1,40 +1,54 @@
+
 #shell {
     width: 100%;
 }
 
-#input-line {
+.input-line {
     display: flex;
+    align-items: flex-start;
+    width: 100%;
+    gap: 8px;
 }
 
 #prompt {
     color: #00ff00;
-    /*animation: blinker 2s infinite step-end;*/
     font-weight: bold;
+    white-space: pre;
+    flex-shrink: 0;
 }
 
 @keyframes blinker {
-  50% {
-    opacity: 0;
-  }
+    50% {
+        opacity: 0;
+    }
 }
 
 textarea {
     background-color: transparent;
-    border-color: transparent;
+    border: none;
     font-family: monospace;
+    font-size: inherit;
+    line-height: 1.5;
     color: #00ff00;
     outline: none;
+
     flex: 1;
-    height: auto;
-    resize: none; 
-    overflow-y: hidden; 
+    width: 100%;
+    min-width: 0;
+    min-height: 1.5em;
+    height: 1.5em;
+
+    box-sizing: border-box;
+    resize: none;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
 }
 
-textarea:focus #prompt {
-  animation-play-state: paused;
+textarea:focus {
+    outline: none;
 }
 
 .suggestion {
-  color: rgb(120, 120, 120);
+    color: rgb(120, 120, 120);
 }
-

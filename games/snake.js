@@ -1,201 +1,299 @@
-let gsize = 0;
-let gwidth = 0;
-let gheight = 0;
-let snakex = 0;
-let snakey = 0;
-let snakenosex = 0;
-let snakenosey = 0;
-let speed = 0;
-let deltaspeed = 0;
-let foodx = 0;
-let foody = 0;
-let snakesize = 0;
-let foodsize = 0;
-let direction = 0; // 0 means stopped, 1 is up, 2 is right, 3 is down, 4 is left
-let body = [];
-let tempbody = [];
-let points = 0;
-let bodyincrement = 0;
-let maxpoints = 0;
+// Snake: steer with WASD / arrow keys, or tap the side of the board you want to
+// go towards. The board wraps around the edges.
+//
+// The snake moves on a grid, one cell per step, so eating and collisions are
+// exact cell comparisons instead of pixel approximations.
 
-// Load the image
-function preload() {
-}
+const BEST_KEY = "snake-best";
+const CELLS_ON_SHORT_SIDE = 25;
+const START_STEP_MS = 110;  // time between two moves at the start
+const MIN_STEP_MS = 50;     // fastest possible speed
+const SPEEDUP_MS = 2;       // every food makes the snake this much faster
+const GROWTH = 2;           // segments gained per food
+const START_LENGTH = 3;
+const RESTART_DELAY = 500;  // ms after dying before input restarts (avoids accidental restarts)
+
+const DIRS = {
+    up:    { x: 0, y: -1 },
+    right: { x: 1, y: 0 },
+    down:  { x: 0, y: 1 },
+    left:  { x: -1, y: 0 },
+};
+const KEY_DIRS = {
+    w: "up",    arrowup: "up",
+    d: "right", arrowright: "right",
+    s: "down",  arrowdown: "down",
+    a: "left",  arrowleft: "left",
+};
+
+let cell, cols, rows, offsetX, offsetY;
+let snake;                  // grid cells, head first
+let dir;                    // current direction, null until the first input
+let dirQueue;               // direction changes waiting for the next steps (max 2)
+let growth;                 // segments still to be added
+let food;
+let stepMs;
+let stepTimer;
+let state;                  // "ready" | "playing" | "over"
+let won = false;
+let overSince = 0;
+let score = 0;
+let best = 0;
 
 function setup() {
-    p5Div = document.getElementById("game-div");
-    gwidth = elementWidth(p5Div);
-    gheight = window.innerHeight * 9/10; 
-    const p5Canvas = createCanvas(gwidth, gheight);
-    p5Canvas.parent(p5Div);
-    
-    gsize = Math.min(gwidth/gheight, gheight/gwidth);
-    snakesize = gsize * 40;
-    foodsize = gsize * 35;
-    maxpoints = 0;
-    bodyincrement = 10;
-    deltaspeed = gsize * 0.15;
-    
-    gameReset();
+    createCanvas(gameWidth(), gameHeight()).parent("game-div");
+    frameRate(60);
+    best = loadBest(BEST_KEY);
+    resetGame();
+}
+
+function resetGame() {
+    cell = max(8, floor(min(width, height) / CELLS_ON_SHORT_SIDE));
+    cols = floor(width / cell);
+    rows = floor(height / cell);
+    offsetX = floor((width - cols * cell) / 2);
+    offsetY = floor((height - rows * cell) / 2);
+
+    snake = [{ x: floor(cols / 2), y: floor(rows / 2) }];
+    dir = null;
+    dirQueue = [];
+    growth = START_LENGTH - 1;
+    food = spawnFood();
+    stepMs = START_STEP_MS;
+    stepTimer = 0;
+    score = 0;
+    won = false;
+    state = "ready";
 }
 
 function draw() {
-    background(220);
-    frameRate(60);
+    background(200);
 
-    let snakenosey;
-    // handle direction
-    if (direction == 1) {
-        snakey -= speed;
-        snakenosey = snakey - snakesize/2;
-        snakenosex = snakex;
-    } else if (direction == 2) {
-        snakex += speed;
-        snakenosey = snakey;
-        snakenosex = snakex + snakesize/2;
-    } else if (direction == 3) {
-        snakey += speed;
-        snakenosey = snakey + snakesize/2;
-        snakenosex = snakex;
-    } else if (direction == 4) {
-        snakex -= speed;
-        snakenosey = snakey;
-        snakenosex = snakex - snakesize/2;
-    }
-
-    // pacman effect
-    if (snakex > width) {
-        snakex = -snakesize;
-    } else if (snakex < -snakesize) {
-        snakex = width;
-    }
-
-    if (snakey > height) {
-        snakey = -snakesize;
-    } else if (snakey < -snakesize) {
-        snakey = height;
-    }
-
-    // body
-    noStroke();
-    fill("#009900");
-    for (let i = body.length - 1; i > 0; i--) {
-        body[i].x = body[i - 1].x;
-        body[i].y = body[i - 1].y;
-        square(body[i].x, body[i].y, snakesize);
-    }
-    body[0] = {"x": snakex, "y": snakey};
-
-    // check if food eaten
-    if (snakex > foodx - foodsize/2 && snakex < foodx + foodsize/2 && snakey > foody - foodsize/2 && snakey < foody + foodsize/2) {
-        foodx = random(0 + foodsize/2, width - foodsize/2);
-        foody = random(0 + foodsize/2, height - foodsize/2);
-        points++;
-        if (points > maxpoints) maxpoints = points;
-
-        // Initialize new body segments at the current head position
-        for (let i = 0; i < bodyincrement; i++) {
-            body.push({"x": snakex, "y": snakey});
-        }
-        
-        speed += deltaspeed;
-    }
-
-    // make body longer
-    tempbody.push({"x": snakex, "y": snakey});
-    if (tempbody.length > bodyincrement) tempbody.shift(); // remove first element
-
-    // body detection (skip detection for new body segments)
-    for (let i = 1; i < body.length - bodyincrement; i++) {
-        let distX = Math.abs(body[i].x - snakenosex);
-        let distY = Math.abs(body[i].y - snakenosey);
-
-        // Check collision only if the body segment is visibly separated from the head
-        if (distX < snakesize/2 && distY < snakesize/2) {
-            gameReset();
-            break;
+    if (state === "playing") {
+        // Cap the accumulated time so the snake doesn't teleport after the tab was hidden
+        stepTimer = min(stepTimer + deltaTime, stepMs * 3);
+        while (state === "playing" && stepTimer >= stepMs) {
+            stepTimer -= stepMs;
+            step();
         }
     }
 
-    textSize(width/30);
-    fill(0,0,0);
-    text("Points: " + points, width/30, width/20);
-    text("Highscore: " + maxpoints, width/30, width/12);
-
-    stroke("#000000");
-    strokeWeight(1);
-    fill("#ff0000");
-    square(foodx, foody, foodsize);
-
-    fill("#00ff00");
-    square(snakex, snakey, snakesize);
+    drawBoard();
+    drawFood();
+    drawSnake();
+    drawHud();
 }
 
-function keyPressed() {
-    if (key === 'w') { // up
-        if (direction != 3) {
-            direction = 1;
+function step() {
+    if (dirQueue.length > 0) dir = dirQueue.shift();
+
+    const head = snake[0];
+    const next = {
+        x: (head.x + dir.x + cols) % cols, // wrap around the edges
+        y: (head.y + dir.y + rows) % rows,
+    };
+
+    const eating = food !== null && next.x === food.x && next.y === food.y;
+    if (eating) growth += GROWTH;
+
+    // The tail moves out of the way this step, unless the snake is growing
+    const body = growth > 0 ? snake : snake.slice(0, -1);
+    if (body.some(s => s.x === next.x && s.y === next.y)) {
+        gameOver(false);
+        return;
+    }
+
+    snake.unshift(next);
+    if (growth > 0) growth--;
+    else snake.pop();
+
+    if (eating) {
+        score++;
+        if (score > best) {
+            best = score;
+            saveBest(BEST_KEY, best);
         }
-    } else if (key == 'd') { // right
-        if (direction != 4) {
-            direction = 2;
-        }
-    } else if (key == 's') { // down
-        if (direction != 1) {
-            direction = 3;
-        }
-    } else if (key == 'a') { // left
-        if (direction != 2) {
-            direction = 4;
+        stepMs = max(MIN_STEP_MS, stepMs - SPEEDUP_MS);
+        food = spawnFood();
+        if (food === null) gameOver(true); // no free cell left: the board is full
+    }
+}
+
+function spawnFood() {
+    const occupied = new Set(snake.map(s => s.x + "," + s.y));
+    const free = [];
+    for (let x = 0; x < cols; x++) {
+        for (let y = 0; y < rows; y++) {
+            if (!occupied.has(x + "," + y)) free.push({ x, y });
         }
     }
+    return free.length > 0 ? random(free) : null;
+}
+
+function gameOver(hasWon) {
+    won = hasWon;
+    state = "over";
+    overSince = millis();
+}
+
+function queueDirection(name) {
+    if (state === "over") {
+        if (millis() - overSince < RESTART_DELAY) return;
+        resetGame();
+    }
+
+    const d = DIRS[name];
+    // Compare with the last *queued* direction, so two quick key presses
+    // can't turn the snake straight back into itself
+    const last = dirQueue.length > 0 ? dirQueue[dirQueue.length - 1] : dir;
+    if (last && (d === last || (d.x === -last.x && d.y === -last.y))) return;
+    if (dirQueue.length >= 2) return;
+    dirQueue.push(d);
+
+    if (state === "ready") {
+        state = "playing";
+        stepTimer = stepMs; // move right away
+    }
+}
+
+// ---------- drawing ----------
+
+function cellRect(c, inset) {
+    rect(offsetX + c.x * cell + inset, offsetY + c.y * cell + inset,
+         cell - 2 * inset, cell - 2 * inset);
+}
+
+function drawBoard() {
+    push();
+    noStroke();
+    fill(220);
+    rect(offsetX, offsetY, cols * cell, rows * cell);
+
+    if (state === "ready") {
+        // Hint at the four tap zones
+        stroke(0, 40);
+        strokeWeight(1);
+        line(0, 0, width, height);
+        line(0, height, width, 0);
+    }
+    pop();
+}
+
+function drawFood() {
+    if (food === null) return;
+    push();
+    stroke(0);
+    strokeWeight(1);
+    fill("#ff0000");
+    cellRect(food, cell * 0.1);
+    pop();
+}
+
+function drawSnake() {
+    push();
+    noStroke();
+    fill("#009900");
+    for (let i = snake.length - 1; i > 0; i--) cellRect(snake[i], 1);
+    stroke(0);
+    strokeWeight(1);
+    fill("#00ff00");
+    cellRect(snake[0], 0);
+    pop();
+}
+
+function drawHud() {
+    push();
+    noStroke();
+    fill(0);
+    const size = max(14, cell * 0.9);
+    textSize(size);
+    textAlign(LEFT, TOP);
+    text("Points: " + score, offsetX + size * 0.6, offsetY + size * 0.6);
+    text("Highscore: " + best, offsetX + size * 0.6, offsetY + size * 1.9);
+
+    textAlign(CENTER, CENTER);
+    if (state === "ready") {
+        text("WASD / arrow keys\nor tap a side of the board", width / 2, height * 0.72);
+    } else if (state === "over") {
+        textSize(size * 2);
+        text(won ? "You won!" : "Game over", width / 2, height / 2 - size * 1.5);
+        textSize(size);
+        text("Press a direction to play again", width / 2, height / 2 + size);
+    }
+    pop();
+}
+
+// ---------- input ----------
+
+function keyPressed() {
+    const name = KEY_DIRS[String(key).toLowerCase()]; // also works with caps lock on
+    if (!name) return;
+    queueDirection(name);
+    return false; // stop the arrow keys from scrolling the page
+}
+
+// The canvas is split along its diagonals into four triangles:
+// tapping the top one goes up, the right one goes right, and so on.
+function directionFromPoint(x, y) {
+    const slope = height / width;
+    const aboveMain = y < slope * x;           // top-left -> bottom-right diagonal
+    const aboveAnti = y < height - slope * x;  // bottom-left -> top-right diagonal
+    if (aboveMain && aboveAnti) return "up";
+    if (aboveMain) return "right";
+    if (aboveAnti) return "left";
+    return "down";
+}
+
+// p5 listens on the whole window: only react to clicks/taps on the canvas.
+
+function mousePressed() {
+    if (!insideCanvas(mouseX, mouseY)) return;
+    queueDirection(directionFromPoint(mouseX, mouseY));
+    return false;
 }
 
 function touchStarted() {
-    // handle touch
-    let m = height / width;
-    for (let touch of touches) {
-          // handle touch
-        if (touch.y < m * touch.x && touch.y < -m * touch.x + height) {
-            // up
-            if (direction != 3) direction = 1;
-        } else if (touch.y < m * touch.x && touch.y > -m * touch.x + height) {
-            // right
-            if (direction != 4) direction = 2;
-        } else if (touch.y > m * touch.x && touch.y < -m * touch.x + height) {
-            // left
-            if (direction != 2) direction = 4;
-        } else {
-            if (direction != 1) direction = 3;
-        }
+    const t = touches[touches.length - 1]; // the finger that just touched
+    if (!t || !insideCanvas(t.x, t.y)) return;
+    queueDirection(directionFromPoint(t.x, t.y));
+    return false; // prevents the emulated mouse click and page scrolling
+}
+
+function windowResized() {
+    const w = gameWidth();
+    if (w === width) return; // ignore height-only changes (mobile address bar showing/hiding)
+    resizeCanvas(w, gameHeight());
+    resetGame();
+}
+
+// ---------- helpers ----------
+
+function gameWidth() {
+    const div = document.getElementById("game-div");
+    const style = window.getComputedStyle(div);
+    return floor(div.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight));
+}
+
+function gameHeight() {
+    return floor(window.innerHeight * 0.9);
+}
+
+function insideCanvas(x, y) {
+    return x >= 0 && x <= width && y >= 0 && y <= height;
+}
+
+function loadBest(storageKey) {
+    try {
+        return parseInt(localStorage.getItem(storageKey), 10) || 0;
+    } catch (e) {
+        return 0; // storage disabled (e.g. some private modes)
     }
 }
 
-function gameReset() {
-    snakex = width/2 - snakesize/2;
-    snakey = height/2 - snakesize/2;
-    direction = 0;
-    speed = gsize * 8;
-    body = [];
-    points = 0; 
-    foodx = random(0 + foodsize/2, width - foodsize/2);
-    foody = random(0 + foodsize/2, height - foodsize/2);
-}
-
-// Calculate the Width in pixels of a Dom element
-function elementWidth(element) {
-    return (
-        element.clientWidth -
-        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-left")) -
-        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-right"))
-    )
-}
-
-// Calculate the Height in pixels of a Dom element
-function elementHeight(element) {
-    return (
-        element.clientHeight -
-        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-top")) -
-        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-bottom"))
-    )
+function saveBest(storageKey, value) {
+    try {
+        localStorage.setItem(storageKey, String(value));
+    } catch (e) {
+        // ignore, the highscore just won't persist
+    }
 }

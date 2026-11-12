@@ -1,199 +1,235 @@
-let gsize = 0;
-let gwidth = 0;
-let gheight = 0;
-let polex = 0;
-let poley = 0;
-let polevy = 0;
-let poleweight = 0;
-let gravity = 0;
-let csize = 0;
-let points = 0;
-let maxpoints = 0;
-let game_started = false;
+// Flappy Pole: click, tap, or press space / up arrow to flap through the pipes.
+//
+// Sizes and speeds are expressed in "units" (1/100 of the shorter canvas side),
+// so the game plays the same on a phone and on a wide monitor.
+
+const BEST_KEY = "flappy-pole-best";
+const GRAVITY = 0.045;      // units / frame^2
+const FLAP = 0.85;          // upward speed right after a flap, units / frame
+const MAX_FALL = 1.6;       // terminal velocity, units / frame
+const POLE_RADIUS = 5;
+const HITBOX = 0.8;         // fraction of the radius used for collisions (a bit forgiving)
+const PIPE_WIDTH = 11;
+const PIPE_GAP = 34;
+const PIPE_SPEED = 0.5;     // units / frame
+const PIPE_SPACING = 55;    // horizontal distance between two pipes
+const PIPE_MARGIN = 8;      // minimum distance between a gap and the top/bottom edge
+const RESTART_DELAY = 500;  // ms after dying before a click restarts (avoids accidental restarts)
+
 let img;
-let ticks = 0;
-let pipes = [];
+let unit;
+let state;                  // "ready" | "playing" | "over"
+let overSince = 0;
+let pole;
+let pipes;
+let score = 0;
+let best = 0;
 
-class Pipe {
-    constructor() {
-        this.width = 80;
-        this.x = width;
-        this.gapHeight = csize*3;
-        this.gapY = random(
-            this.gapHeight / 2 + gsize*20,
-            height - this.gapHeight / 2 - gsize*20
-        );
-        this.speed = 4;
-        this.scored = false;
-    }
-
-    update() {
-        this.x -= this.speed;
-    }
-
-    show() {
-        fill(0, 180, 0);
-
-        // Top pipe
-        rect(
-            this.x,
-            0,
-            this.width,
-            this.gapY - this.gapHeight / 2
-        );
-
-        // Bottom pipe
-        rect(
-            this.x,
-            this.gapY + this.gapHeight / 2,
-            this.width,
-            height
-        );
-    }
-
-    offscreen() {
-        return this.x + this.width < 0;
-    }
-
-    hits(x, y, radius) {
-        const insideX =
-            x + radius > this.x &&
-            x - radius < this.x + this.width;
-
-        const insideTop =
-            y - radius < this.gapY - this.gapHeight / 2;
-
-        const insideBottom =
-            y + radius > this.gapY + this.gapHeight / 2;
-
-        return insideX && (insideTop || insideBottom);
-    }
-}
-
-// Load the image
 function preload() {
-  img = loadImage('../imgs/1000.png');
+    img = loadImage("/imgs/1000.png");
 }
 
 function setup() {
-    p5Div = document.getElementById("game-div");
-    gwidth = elementWidth(p5Div);
-    gheight = window.innerHeight * 9/10; 
-    const p5Canvas = createCanvas(gwidth, gheight);
-    p5Canvas.parent(p5Div);
-    
-    gameReset();
+    createCanvas(gameWidth(), gameHeight()).parent("game-div");
+    frameRate(60);
+    best = loadBest(BEST_KEY);
+    resetGame();
+}
+
+function resetGame() {
+    unit = min(width, height) / 100;
+    pole = { x: width / 5, y: height / 2, vy: 0, r: POLE_RADIUS * unit };
+    pipes = [];
+    score = 0;
+    state = "ready";
 }
 
 function draw() {
     background(220);
-    frameRate(60);
 
-    if (game_started) {
-        polevy += gravity; 
-        poley += polevy;
-    }
-    
-    // wall bouncing
-    if (poley + gsize * csize/2 >= height) {
-        gameReset();
-    } else if (poley - gsize * csize/2 <= 0) {
-        gameReset();
+    if (state === "playing") {
+        update();
+    } else if (state === "ready") {
+        pole.y = height / 2 + sin(frameCount * 0.08) * 2 * unit; // idle bobbing
     }
 
-    if (ticks == 120 && game_started) {
-        pipes.push(new Pipe());
-        ticks = 0;
-    }
-    if (game_started) {
-        ticks++;
-    }
-
-    for (let i = pipes.length - 1; i >= 0 && game_started; i--) {
-        pipes[i].update();
-        pipes[i].show();
-
-        if (pipes[i].hits(
-            polex,
-            poley,
-            gsize * csize / 2
-        )) {
-            gameReset();
-        }
-
-        if (
-            !pipes[i].scored &&
-            pipes[i].x + pipes[i].width < polex
-        ) {
-            pipes[i].scored = true;
-            incrementPoints();
-        }
-
-        if (pipes[i].offscreen()) {
-            pipes.splice(i, 1);
-        }
-    }
-
-    textSize(width/30);
-    fill(0,0,0);
-    text("Points: " + points, width/30, width/20);
-    text("Highscore: " + maxpoints, width/30, width/12);
-    image(img, polex - gsize * csize/2, poley - gsize * csize/2, gsize * csize, gsize * csize);
+    pipes.forEach(drawPipe);
+    drawPole();
+    drawHud();
 }
 
-function mouseClicked() {
-    game_started = true;
-    makePoleFly();
+function update() {
+    pole.vy = min(pole.vy + GRAVITY * unit, MAX_FALL * unit);
+    pole.y += pole.vy;
+
+    // The ceiling stops you instead of killing you
+    if (pole.y - pole.r < 0) {
+        pole.y = pole.r;
+        pole.vy = 0;
+    }
+    if (pole.y + pole.r * HITBOX > height) {
+        gameOver();
+        return;
+    }
+
+    const last = pipes[pipes.length - 1];
+    if (!last || last.x < width - PIPE_SPACING * unit) {
+        pipes.push(newPipe());
+    }
+
+    for (const p of pipes) {
+        p.x -= PIPE_SPEED * unit;
+
+        if (!p.scored && p.x + p.w < pole.x) {
+            p.scored = true;
+            score++;
+            if (score > best) {
+                best = score;
+                saveBest(BEST_KEY, best);
+            }
+        }
+        if (hitsPipe(p)) {
+            gameOver();
+            return;
+        }
+    }
+    pipes = pipes.filter(p => p.x + p.w > 0);
+}
+
+function newPipe() {
+    const gap = PIPE_GAP * unit;
+    const margin = PIPE_MARGIN * unit;
+    const gapTop = random(margin, height - margin - gap);
+    return { x: width, w: PIPE_WIDTH * unit, gapTop, gapBottom: gapTop + gap, scored: false };
+}
+
+function hitsPipe(p) {
+    const r = pole.r * HITBOX;
+    return circleHitsRect(pole.x, pole.y, r, p.x, 0, p.w, p.gapTop) ||
+           circleHitsRect(pole.x, pole.y, r, p.x, p.gapBottom, p.w, height - p.gapBottom);
+}
+
+function circleHitsRect(cx, cy, r, rx, ry, rw, rh) {
+    const nearestX = constrain(cx, rx, rx + rw);
+    const nearestY = constrain(cy, ry, ry + rh);
+    return (cx - nearestX) ** 2 + (cy - nearestY) ** 2 < r * r;
+}
+
+function gameOver() {
+    state = "over";
+    overSince = millis();
+}
+
+function flap() {
+    if (state === "over") {
+        if (millis() - overSince < RESTART_DELAY) return;
+        resetGame();
+    }
+    state = "playing";
+    pole.vy = -FLAP * unit;
+}
+
+// ---------- drawing ----------
+
+function drawPipe(p) {
+    push();
+    fill(0, 180, 0);
+    stroke(0, 110, 0);
+    strokeWeight(max(1, unit * 0.4));
+    rect(p.x, -10, p.w, p.gapTop + 10);
+    rect(p.x, p.gapBottom, p.w, height - p.gapBottom + 10);
+    pop();
+}
+
+function drawPole() {
+    push();
+    translate(pole.x, pole.y);
+    rotate(constrain(pole.vy / (MAX_FALL * unit), -1, 1) * 0.4); // tilt with the speed
+    imageMode(CENTER);
+    image(img, 0, 0, pole.r * 2, pole.r * 2);
+    pop();
+}
+
+function drawHud() {
+    push();
+    noStroke();
+    fill(0);
+    textSize(unit * 4.5);
+    textAlign(LEFT, TOP);
+    text("Points: " + score, unit * 3, unit * 3);
+    text("Highscore: " + best, unit * 3, unit * 9);
+
+    textAlign(CENTER, CENTER);
+    if (state === "ready") {
+        textSize(unit * 4);
+        text("Click, tap or press space to fly", width / 2, height * 0.75);
+    } else if (state === "over") {
+        textSize(unit * 8);
+        text("Game over", width / 2, height / 2 - unit * 6);
+        textSize(unit * 4);
+        text("Click, tap or press space to retry", width / 2, height / 2 + unit * 4);
+    }
+    pop();
+}
+
+// ---------- input ----------
+// p5 listens on the whole window: only react to clicks/taps on the canvas,
+// otherwise clicking the navigation links would also make Pole flap.
+
+function mousePressed() {
+    if (!insideCanvas(mouseX, mouseY)) return;
+    flap();
+    return false;
 }
 
 function touchStarted() {
-    // handle touch
-    for (let touch of touches) {
-        if (poleKicked(touch.x, touch.y)) {
-            makePoleFly();
-            incrementPoints();
-        }
+    if (!touches.some(t => insideCanvas(t.x, t.y))) return;
+    flap();
+    return false; // prevents the emulated mouse click (double flap) and page scrolling
+}
+
+function keyPressed() {
+    if (key === " " || keyCode === UP_ARROW) {
+        flap();
+        return false; // don't scroll the page
     }
 }
 
-function makePoleFly() {
-    polevy = -poleweight;
+function windowResized() {
+    const w = gameWidth();
+    if (w === width) return; // ignore height-only changes (mobile address bar showing/hiding)
+    resizeCanvas(w, gameHeight());
+    resetGame();
 }
 
-function incrementPoints() {
-    points++;
-    if (points > maxpoints) maxpoints = points;
+// ---------- helpers ----------
+
+function gameWidth() {
+    const div = document.getElementById("game-div");
+    const style = window.getComputedStyle(div);
+    return floor(div.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight));
 }
 
-function gameReset() {
-    gsize = Math.min(gwidth/gheight, gheight/gwidth);
-    polevy = gsize * 1;
-    polex = gwidth/6;
-    poley = gheight/2;
-    poleweight = gsize * 8;
-    gravity = gsize * 0.4;
-    csize = gsize * 120;
-    points = 0;
-    game_started = false;
-    pipes = [];
-    pipes.push(new Pipe());
-    ticks = 0;
+function gameHeight() {
+    return floor(window.innerHeight * 0.9);
 }
 
-// Calculate the Width in pixels of a Dom element
-function elementWidth(element) {
-    return (
-        element.clientWidth -
-        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-left")) -
-        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-right"))
-    )
+function insideCanvas(x, y) {
+    return x >= 0 && x <= width && y >= 0 && y <= height;
 }
 
-// Calculate the Height in pixels of a Dom element
-function elementHeight(element) {
-    return (
-        element.clientHeight -
-        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-top")) -
-        parseFloat(window.getComputedStyle(element, null).getPropertyValue("padding-bottom"))
-    )
+function loadBest(storageKey) {
+    try {
+        return parseInt(localStorage.getItem(storageKey), 10) || 0;
+    } catch (e) {
+        return 0; // storage disabled (e.g. some private modes)
+    }
+}
+
+function saveBest(storageKey, value) {
+    try {
+        localStorage.setItem(storageKey, String(value));
+    } catch (e) {
+        // ignore, the highscore just won't persist
+    }
 }

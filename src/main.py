@@ -1,283 +1,272 @@
-import markdown2 # https://github.com/trentm/python-markdown2
+
+"""Static website generator: turns misc/, posts/ and games/ into www/."""
+
+import html
+import json
 import os
+
+import markdown2  # https://github.com/trentm/python-markdown2
 
 MISC_DIR = "misc/"
 POSTS_DIR = "posts/"
 GAMES_DIR = "games/"
 WWW_DIR = "www/"
-WWW_POSTS_DIR = "www/posts/"
-WWW_GAMES_DIR = "www/games/"
-WWW_SCRIPTS_DIR = "www/scripts/"
-DOCTYPE_START = """<!DOCTYPE html>
+WWW_POSTS_DIR = WWW_DIR + "posts/"
+WWW_GAMES_DIR = WWW_DIR + "games/"
+WWW_SCRIPTS_DIR = WWW_DIR + "scripts/"
+
+MD_EXTRAS = [
+    "footnotes", "header-ids", "smarty-pants", "strike", "toc",
+    "wiki-tables", "tables", "fenced-code-blocks", "latex"
+]
+
+PAGE_START = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{}</title>
+    <title>{title}</title>{head_extra}
     <link rel="stylesheet" href="/style/style.css">
 </head>
 <body>"""
-DOCTYPE_GAMES_START = """<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{}</title>
-    <script src="/scripts/p5.min.js"></script>
-    <link rel="stylesheet" href="/style/style.css">
-</head>
-<body>"""
-DOCTYPE_END = """<script src="/scripts/microlight.js"></script>
+
+PAGE_END = """<script src="/scripts/microlight.js"></script>
 </body>
 </html>"""
 
-# INDEX 
-index_content = DOCTYPE_START.format("Pole :)")
-
-# topbar
-with open(MISC_DIR + "topbar.html", "r") as f:
-    content = f.read()
-    #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    index_content += content
-
-with open(MISC_DIR + "home.md", "r") as f:
-    content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    index_content += html
-
-# posts list
-posts = os.listdir(POSTS_DIR)
-posts = [post for post in posts if post.endswith(".md")]
-posts = filter(lambda p: p[0] != '.', posts)
-posts = sorted(posts)
-posts = reversed(posts)
-posts = list(posts)
-
-if len(posts) > 0:
-    index_content += "<p>Here is a list of my recent posts:</p>"
-    index_content += "<ul>"
-
-    for i in range(0,min(len(posts), 5)):
-        post = posts[i]
-        index_content += "<li><a href=\"/posts/" + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
-
-    index_content += "</ul>"
-
-# footer
-with open(MISC_DIR + "footer.md", "r") as f:
-    content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    index_content += html
-
-index_content += DOCTYPE_END
-
-with open(WWW_DIR + "index.html", "w") as f:
-    f.write(index_content)
-
-# POST INDEX
-post_index_content = DOCTYPE_START.format("Posts")
-
-# topbar
-with open(MISC_DIR + "topbar.html", "r") as f:
-    content = f.read()
-    #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    post_index_content += content
-
-# posts list
-posts = os.listdir(POSTS_DIR)
-posts = [post for post in posts if post.endswith(".md")]
-posts = filter(lambda p: p[0] != '.', posts)
-posts = sorted(posts)
-
-post_index_content += "<p>Sometimes, when I remember I have a website, I write a post. Here is a list of them: </p>"
-post_index_content += "<ul>"
-
-for post in posts:
-    post_index_content += "<li><a href=\"/posts/" + post.replace(".md", ".html") + "\">" + post.replace(".md", "") + "</a></li>"
-
-post_index_content += "</ul>"
-
-# footer
-with open(MISC_DIR + "footer.md", "r") as f:
-    content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    post_index_content += html
-
-post_index_content += DOCTYPE_END
-
-with open(WWW_POSTS_DIR + "index.html", "w") as f:
-    f.write(post_index_content)
-
-# POST
-posts = os.listdir(POSTS_DIR)
-posts = [post for post in posts if post.endswith(".md")]
-posts = filter(lambda p: p[0] != '.', posts)
-
-for post in posts:
-    post_content = DOCTYPE_START.format(post.replace("-", " ").replace(".md", ""))
-
-    # topbar
-    with open(MISC_DIR + "topbar.html", "r") as f:
-        content = f.read()
-        #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-        post_content += content
-    
-    # content
-    with open(POSTS_DIR + post, "r") as f:
-        content = f.read()
-        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-        post_content += html
-
-    # footer
-    with open(MISC_DIR + "footer.md", "r") as f:
-        content = f.read()
-        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-        post_content += html
-
-    post_content += DOCTYPE_END
-
-    with open(WWW_POSTS_DIR + post.replace(".md", ".html"), "w") as f:
-        f.write(post_content)
-
-# CONTACT
-contact_content = DOCTYPE_START.format("Contact")
-
-# topbar
-with open(MISC_DIR + "topbar.html", "r") as f:
-    content = f.read()
-    #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    contact_content += content
-
-# content
-with open(MISC_DIR + "contact.md", "r") as f:
-    content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    contact_content += html
-
-# footer
-with open(MISC_DIR + "footer.md", "r") as f:
-    content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    contact_content += html
-
-contact_content += DOCTYPE_END
-
-with open(WWW_DIR + "contact.html", "w") as f:
-    f.write(contact_content)
-
-# ABOUT
-about_content = DOCTYPE_START.format("About me")
-
-# topbar
-with open(MISC_DIR + "topbar.html", "r") as f:
-    content = f.read()
-    #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    about_content += content
-
-# content
-with open(MISC_DIR + "about.md", "r") as f:
-    content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    about_content += html
-
-# footer
-with open(MISC_DIR + "footer.md", "r") as f:
-    content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    about_content += html
-
-about_content += DOCTYPE_END
-
-with open(WWW_DIR + "about.html", "w") as f:
-    f.write(about_content)
-
-# HACKER MODE
-posts = os.listdir(POSTS_DIR)
-posts = [post for post in posts if post.endswith(".md")]
-shell_content = ""
-
-with open(MISC_DIR + "shell.js") as f:
-    shell_content += f.read()
-
-with open(WWW_SCRIPTS_DIR + "shell.js", "w") as f:
-    f.write(shell_content + "\ndata = {\n")
-
-for post in posts:
-    post_content = ""
-
-    # content
-    with open(POSTS_DIR + post, "r") as f:
-        content = f.read()
-        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-        post_content += html
-
-    with open(WWW_SCRIPTS_DIR + "shell.js", "a") as f:
-        f.write("\"" + post.replace(".md", "") + "\"" + " : `" + post_content + "`")
-        if (post != posts[-1]):
-            f.write(",\n")
-        else:
-            f.write(" }")
-
-# GAMES INDEX
-game_index_content = DOCTYPE_START.format("Games")
-
-# topbar
-with open(MISC_DIR + "topbar.html", "r") as f:
-    content = f.read()
-    #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    game_index_content += content
-
-# games list
-games = os.listdir(GAMES_DIR)
-games = sorted(games)
-
-game_index_content += "Definitely badly written games:<ul>"
-
-for game in games:
-    game_index_content += "<li><a href=\"/games/" + game.replace(".js", ".html") + "\">" + game.replace(".js", "") + "</a></li>"
-
-game_index_content += "</ul>"
-
-# footer
-with open(MISC_DIR + "footer.md", "r") as f:
-    content = f.read()
-    html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-    game_index_content += html
-
-game_index_content += DOCTYPE_END
-
-with open(WWW_GAMES_DIR + "index.html", "w") as f:
-    f.write(game_index_content)
+P5_SCRIPT = '\n    <script src="/scripts/p5.min.js"></script>'
 
 
-# GAMES
-games = os.listdir(GAMES_DIR)
+def read(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
 
-for game in games:
-    game_content = DOCTYPE_GAMES_START.format(game.replace("-", " ").replace(".js", ""))
 
-    # topbar
-    with open(MISC_DIR + "topbar.html", "r") as f:
-        content = f.read()
-        #html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-        game_content += content
-    
-    game_content += "<div id='game-div'><main></main></div>" # here put the canvas
+def write(path, content):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
 
-    # footer
-    with open(MISC_DIR + "footer.md", "r") as f:
-        content = f.read()
-        html = markdown2.markdown(content, extras=["footnotes, header-ids, highlightjs-lang", "smarty-pants", "strike", "toc", "wiki-tables", "tables", "fenced-code-blocks", "latex"])
-        game_content += html
 
-    # content
-    game_content += "<script defer>"
-    with open(GAMES_DIR + game, "r") as f:
-        content = f.read()
-        game_content += content
-    game_content += "</script>"
-    game_content += DOCTYPE_END
+def markdown(path):
+    return markdown2.markdown(read(path), extras=MD_EXTRAS)
 
-    with open(WWW_GAMES_DIR + game.replace(".js", ".html"), "w") as f:
-        f.write(game_content)
 
+def page(title, body, topbar, footer, head_extra=""):
+    return (
+        PAGE_START.format(
+            title=html.escape(title),
+            head_extra=head_extra
+        )
+        + topbar + body + footer + PAGE_END
+    )
+
+
+def link_list(items):
+    """items: list of (href, label) tuples."""
+    lis = "".join(
+        f'<li><a href="{html.escape(href, quote=True)}">'
+        f'{html.escape(label)}</a></li>'
+        for href, label in items
+    )
+    return f"<ul>{lis}</ul>"
+
+
+def clean_generated(directory):
+    """Delete generated HTML files recursively."""
+    os.makedirs(directory, exist_ok=True)
+
+    for root, dirs, files in os.walk(directory, topdown=False):
+        for name in files:
+            if name.endswith(".html"):
+                os.remove(os.path.join(root, name))
+
+        # Remove empty subdirectories left by deleted categories.
+        for name in dirs:
+            path = os.path.join(root, name)
+            if not os.listdir(path):
+                os.rmdir(path)
+
+
+def discover_posts():
+    """
+    Discover all Markdown posts recursively.
+
+    Returns a sorted list of tuples:
+        (relative_path_without_extension, absolute_source_path)
+
+    Example:
+        ("running/an-hour-a-day",
+         "posts/running/an-hour-a-day.md")
+    """
+    result = []
+
+    for root, dirs, files in os.walk(POSTS_DIR):
+        dirs[:] = sorted(d for d in dirs if not d.startswith("."))
+
+        for filename in sorted(files):
+            if not filename.endswith(".md") or filename.startswith("."):
+                continue
+
+            source = os.path.join(root, filename)
+            relative = os.path.relpath(source, POSTS_DIR)
+            slug = os.path.splitext(relative)[0]
+
+            result.append((slug, source))
+
+    return sorted(result, key=lambda item: item[0])
+
+
+def post_link(slug):
+    """Convert a post slug into its URL and display label."""
+    name = slug.replace(os.sep, "/")
+    label = os.path.basename(name).replace("-", " ")
+
+    return f"/posts/{name}.html", label
+
+
+def main():
+    topbar = read(MISC_DIR + "topbar.html")
+    footer = markdown(MISC_DIR + "footer.md")
+
+    def make_page(title, body, head_extra=""):
+        return page(title, body, topbar, footer, head_extra)
+
+    posts = discover_posts()
+
+    games = sorted(
+        g for g in os.listdir(GAMES_DIR)
+        if g.endswith(".js") and not g.startswith(".")
+    )
+
+    clean_generated(WWW_POSTS_DIR)
+    clean_generated(WWW_GAMES_DIR)
+
+    # HOME
+    body = markdown(MISC_DIR + "home.md")
+
+    if posts:
+        recent = [slug for slug, _ in reversed(posts)][:5]
+        body += (
+            "<p>Here is a list of my recent posts:</p>"
+            + link_list([post_link(slug) for slug in recent])
+        )
+
+    write(
+        WWW_DIR + "index.html",
+        make_page("Pole :)", body)
+    )
+
+    # POSTS INDEX
+    body = (
+        "<p>Sometimes, when I remember I have a website, "
+        "I write a post.</p>"
+    )
+
+    # Group posts by their directory/category.
+    categories = {}
+
+    for slug, source in posts:
+        category = os.path.dirname(slug).replace(os.sep, "/")
+
+        if category not in categories:
+            categories[category] = []
+
+        categories[category].append(slug)
+
+    # Posts directly inside posts/.
+    if "" in categories:
+        body += "<h2>Other</h2>"
+        body += link_list([
+            post_link(slug) for slug in categories[""]
+        ])
+
+    # Categorized posts.
+    for category in sorted(categories):
+        if not category:
+            continue
+
+        title = category.replace("/", " / ").replace("-", " ").title()
+
+        body += f"<h2>{html.escape(title)}</h2>"
+        body += link_list([
+            post_link(slug) for slug in categories[category]
+        ])
+
+    if not posts:
+        body += "<p>Nothing here yet, come back later!</p>"
+
+    write(
+        WWW_POSTS_DIR + "index.html",
+        make_page("Posts", body)
+    )
+
+    # POSTS
+    for slug, source in posts:
+        output = os.path.join(
+            WWW_POSTS_DIR,
+            slug + ".html"
+        )
+
+        title = os.path.basename(slug).replace("-", " ")
+
+        write(
+            output,
+            make_page(title, markdown(source))
+        )
+
+    # HACKER MODE
+    # Preserve the relative category path in each post key.
+    data = {
+        slug: markdown(source)
+        for slug, source in posts
+    }
+
+    write(
+        WWW_SCRIPTS_DIR + "shell.js",
+        read(MISC_DIR + "shell.js")
+        + "\nconst data = " + json.dumps(data, indent=4) + ";\n"
+        + "const gameList = "
+        + json.dumps([g[:-len(".js")] for g in games])
+        + ";\n"
+    )
+
+    # GAMES INDEX
+    body = "<p>Definitely badly written games:</p>" + link_list(
+        [
+            (f"/games/{g[:-len('.js')]}.html",
+             g[:-len(".js")])
+            for g in games
+        ]
+    )
+
+    write(
+        WWW_GAMES_DIR + "index.html",
+        make_page("Games", body)
+    )
+
+    # GAMES
+    for game in games:
+        name = game[:-len(".js")]
+
+        body = (
+            '<div id="game-div"><main></main></div>\n'
+            "<script>\n"
+            + read(GAMES_DIR + game)
+            + "\n</script>\n"
+        )
+
+        write(
+            WWW_GAMES_DIR + name + ".html",
+            make_page(
+                name.replace("-", " "),
+                body,
+                head_extra=P5_SCRIPT
+            )
+        )
+
+    print(f"Generated {len(posts)} posts and {len(games)} games.")
+
+
+if __name__ == "__main__":
+    main()
